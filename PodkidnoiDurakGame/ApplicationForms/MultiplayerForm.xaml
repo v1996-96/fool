@@ -1,0 +1,33 @@
+﻿<Window x:Class="ApplicationForms.MultiplayerForm"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MultiplayerForm" Height="320" Width="340">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="180" />
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <TextBlock FontSize="20" 
+                   FontFamily="Helvetica"
+                   FontWeight="Light"
+                   TextAlignment="Center" 
+                   VerticalAlignment="Center"
+                   Grid.ColumnSpan="2">Игра по сети</TextBlock>
+
+        <ListView Grid.Row="1" BorderThickness="0" Margin="10 0">
+            <TextBlock>LG Nexus 5X</TextBlock>
+            <TextBlock>Huawei Nexus 6P</TextBlock>
+            <TextBlock>iPhone 6S</TextBlock>
+            <TextBlock>iPhone 6S Plus</TextBlock>
+            <TextBlock>Аsus Zenphone 2</TextBlock>
+            <TextBlock>Microsoft Lumia 950</TextBlock>
+        </ListView>
+
+        <Button Grid.Row="2" Height="28" Margin="10 0">Играть</Button>
+    </Grid>
+</Window>
