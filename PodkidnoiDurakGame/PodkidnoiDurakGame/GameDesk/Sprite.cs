@@ -32,6 +32,16 @@ namespace PodkidnoiDurakGame
                     frameSize.X, frameSize.Y);
             }
         }
+        protected Rectangle controlArea
+        {
+            get
+            {
+                return new Rectangle(
+                    (int)Math.Round(position.X), (int)Math.Round(position.Y),
+                    (int)Math.Round(frameSize.X * scale), (int)Math.Round(frameSize.Y * scale)
+                    );
+            }
+        }
 
 
         public Sprite(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame, float zIndex)
@@ -57,7 +67,7 @@ namespace PodkidnoiDurakGame
             this.scale = scale;
         }
 
-        public virtual void Update(GameTime gameTime, Rectangle clientBounds)
+        public virtual void Update(GameTime gameTime)
         {
 
         }

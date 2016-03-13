@@ -28,20 +28,20 @@ namespace PodkidnoiDurakGame
             float zIndex, int frameOffset, float scale, float rotation, Vector2 rotationOrigin)
             : base(textureImage, position, frameSize, currentFrame, zIndex, frameOffset, scale, rotation, rotationOrigin) { }
 
-        public override void Update(GameTime gameTime, Rectangle clientBounds)
+        public override void Update(GameTime gameTime)
         {
             MouseState mouseState = Mouse.GetState();
-            if (rectangle.Contains(mouseState.Position) &&
+            if (controlArea.Contains(mouseState.Position) &&
                 OnHover != null)
-            {
                 OnHover(this);
 
-                if (mouseState.LeftButton == ButtonState.Pressed &&
-                    OnClick != null)
-                    OnClick(this);
-            }
+            if (controlArea.Contains(mouseState.Position) && 
+                mouseState.LeftButton == ButtonState.Pressed &&
+                OnClick != null)
+                OnClick(this);
 
-            base.Update(gameTime, clientBounds);
+
+            base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)

@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using PodkidnoiDurakGame.Core;
 
+using ApplicationForms;
+
 namespace PodkidnoiDurakGame.GameDesk
 {
     public class SpriteManager : DrawableGameComponent
@@ -34,7 +36,8 @@ namespace PodkidnoiDurakGame.GameDesk
                 0,
                 0.7f);
             card.OnClick += (sprite) => {
-                
+                LoginForm login = new LoginForm();
+                login.ShowDialog();
             };
 
             base.LoadContent();
@@ -42,6 +45,7 @@ namespace PodkidnoiDurakGame.GameDesk
 
         public override void Update(GameTime gameTime)
         {
+            card.Update(gameTime);
             base.Update(gameTime);
         }
 
