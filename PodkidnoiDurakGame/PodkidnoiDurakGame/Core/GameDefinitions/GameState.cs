@@ -5,11 +5,10 @@ using System.Text;
 
 namespace PodkidnoiDurakGame.Core
 {
-    struct Card
+    enum GameState
     {
-        public CardType CardType { get; set; }
-
-        public CardSuit CardSuit { get; set; }
-        
+        Ready,
+        Playing,
+        Finished
     }
 }

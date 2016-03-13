@@ -1,4 +1,5 @@
 ﻿using PodkidnoiDurakGame.Core.CardDefinitions;
+using PodkidnoiDurakGame.Core.GameDefinitions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace PodkidnoiDurakGame.Core
                 return _instance;
             }
         }
+        private GameDesktop() {}
         #endregion
 
 
@@ -28,6 +30,7 @@ namespace PodkidnoiDurakGame.Core
         // Fields
         public bool IsBlocked { get; private set; }
         public PlayerType WhoseParty { get; private set; }
+        public GameState GameState { get; private set; }
 
         // Variables
         private Random _rnd = new Random();
@@ -52,9 +55,8 @@ namespace PodkidnoiDurakGame.Core
 
 
         #region Game events
-        // Player events (handled by enemy)
+        // Player events
         public event Action<PlayerType, Card> OnThrowCard;
-        public event Action<PlayerType> OnWaitingTurn;
         public event Action<PlayerType> OnPass;
         public event Action<PlayerType> OnGetAll;
 
@@ -63,7 +65,9 @@ namespace PodkidnoiDurakGame.Core
         public event Action OnGameStopped;
         public event Action OnGameBlocked;
         public event Action OnGameUnBlocked;
+        public event Action<GameResult> OnGameFinished;
         public event Action<GameAction, GameError, string> OnActionRefused;
+        public event Action<GameError, string> OnGameError;
         #endregion
 
 
@@ -80,6 +84,8 @@ namespace PodkidnoiDurakGame.Core
             HandOutCards();
             DecideWhoseTurn();
 
+            GameState = GameState.Ready;
+
             if (OnGameStarted != null) OnGameStarted();
         }
         public void StopGame()
@@ -88,6 +94,8 @@ namespace PodkidnoiDurakGame.Core
             EnemyCards = new List<Card> { };
             DescPairs = new List<CardPair> { };
             Deck = new List<Card> { };
+
+            GameState = GameState.Finished;
 
             if (OnGameStopped != null) OnGameStopped();
         }
@@ -104,6 +112,62 @@ namespace PodkidnoiDurakGame.Core
                 if (OnGameBlocked != null) OnGameBlocked();
             }
         }
+        private void CheckGameState()
+        {
+            // Game result refers only to user on current machine
+
+            // If game is stopped or ready we do nothing
+            if (GameState == GameState.Ready ||
+                GameState == GameState.Finished)
+                return;
+
+            // When there is a draw
+            if (PlayerCards.Count == 0 &&
+                EnemyCards.Count == 0)
+            {
+                if (OnGameFinished != null) OnGameFinished(GameResult.Draw);
+                GameState = GameState.Finished;
+            }
+
+            // When player wins or plays a draw
+            if (PlayerCards.Count == 0)
+            {
+                if (EnemyCards.Count > 1)
+                {
+                    if (OnGameFinished != null) OnGameFinished(GameResult.Win);
+                    GameState = GameState.Finished;
+                }
+                if (EnemyCards.Count == 1 &&
+                    WhoseParty == PlayerType.Player)
+                {
+                    if (!ThrowWhenNotOwnParty(EnemyCards[0]))
+                    {
+                        if (OnGameFinished != null) OnGameFinished(GameResult.Win);
+                        GameState = GameState.Finished;
+                    }
+                }
+            }
+
+
+            // When enemy wins or plays a draw
+            if (EnemyCards.Count == 0)
+            {
+                if (PlayerCards.Count > 1)
+                {
+                    if (OnGameFinished != null) OnGameFinished(GameResult.Loose);
+                    GameState = GameState.Finished;
+                }
+                if (PlayerCards.Count == 1 &&
+                    WhoseParty == PlayerType.Enemy)
+                {
+                    if (!ThrowWhenNotOwnParty(PlayerCards[0]))
+                    {
+                        if (OnGameFinished != null) OnGameFinished(GameResult.Loose);
+                        GameState = GameState.Finished;
+                    }
+                }
+            }
+        }
         #endregion
 
 
@@ -111,9 +175,95 @@ namespace PodkidnoiDurakGame.Core
         #region Decide whose turn
         private void DecideWhoseTurn()
         {
-            WhoseParty = PlayerType.Player;
+            var playerMinTrump = GetMinTrump(PlayerCards);
+            var enemyMinTrump = GetMinTrump(EnemyCards);
 
-            // TODO: Write algorithm, which will make that decision
+            if (playerMinTrump == null && enemyMinTrump == null)
+            {
+                var playerMaxNonTrump = GetMaxNonTrump(PlayerCards);
+                var enemyMaxNonTrump = GetMaxNonTrump(EnemyCards);
+                if (playerMaxNonTrump == null || enemyMaxNonTrump == null)
+                {
+                    if (OnGameError != null) OnGameError(GameError.Error, "Can't decide which turn there is");
+                    StopGame();
+                    return;
+                }
+
+                if ((int)playerMaxNonTrump.Value.CardType < (int)enemyMaxNonTrump.Value.CardType)
+                    WhoseParty = PlayerType.Enemy;
+
+                if ((int)playerMaxNonTrump.Value.CardType > (int)enemyMaxNonTrump.Value.CardType)
+                    WhoseParty = PlayerType.Player;
+
+                if ((int)playerMaxNonTrump.Value.CardType == (int)enemyMaxNonTrump.Value.CardType)
+                    WhoseParty = PlayerType.Player;
+            }
+
+            if (playerMinTrump != null && enemyMinTrump == null)
+                WhoseParty = PlayerType.Player;
+
+            if (playerMinTrump == null && enemyMinTrump != null)
+                WhoseParty = PlayerType.Enemy;
+
+            if (playerMinTrump != null && enemyMinTrump != null)
+            {
+                if ((int)playerMinTrump.Value.CardType < (int)enemyMinTrump.Value.CardType)
+                    WhoseParty = PlayerType.Player;
+
+                if ((int)playerMinTrump.Value.CardType > (int)enemyMinTrump.Value.CardType)
+                    WhoseParty = PlayerType.Enemy;
+
+                if ((int)playerMinTrump.Value.CardType == (int)enemyMinTrump.Value.CardType)
+                    WhoseParty = PlayerType.Player;
+            }
+        }
+        private Card? GetMinTrump(List<Card> cardList)
+        {
+            if (cardList.Count == 0)
+                return null;
+
+            Card min = new Card();
+            bool found = false;
+
+            foreach (var card in cardList)
+            {
+                if (card.CardSuit == Trump)
+                {
+                    min = card;
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found)
+            {
+                foreach (var card in cardList)
+                {
+                    if ((int)card.CardType < (int)min.CardType)
+                    {
+                        min = card;
+                    }
+                }
+            }
+            else return null;
+
+            return min;
+        }
+        private Card? GetMaxNonTrump(List<Card> cardList)
+        {
+            if (cardList.Count == 0)
+                return null;
+
+            Card max = cardList[0];
+            for (int i = 0; i < cardList.Count; i++)
+            {
+                if ((int)cardList[i].CardType > (int)max.CardType)
+                {
+                    max = cardList[i];
+                }
+            }
+
+            return max;
         }
         #endregion
 
