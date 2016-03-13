@@ -19,6 +19,7 @@ namespace PodkidnoiDurakGame
         protected Point frameSize;      // Represents height and width of the frame
         protected Vector2 position;     // Represents current position of the frame on window
         protected float zIndex = 0;
+        protected float scale = 1f;
 
         public abstract Vector2 direction { set; get; }
         protected Rectangle rectangle
@@ -32,10 +33,18 @@ namespace PodkidnoiDurakGame
             }
         }
 
-        public Sprite(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame, float zIndex)
-            : this(textureImage, position, frameSize, currentFrame, zIndex, 0, Vector2.Zero) { }
 
-        public Sprite(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame, float zIndex, float rotation, Vector2 rotationOrigin)
+        public Sprite(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame, float zIndex)
+            : this(textureImage, position, frameSize, currentFrame, zIndex, 5, 0, Vector2.Zero, 1f) { }
+        public Sprite(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame, float zIndex, int frameOffset)
+            : this(textureImage, position, frameSize, currentFrame, zIndex, frameOffset, 0, Vector2.Zero, 1f) { }
+        public Sprite(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame, float zIndex, float scale)
+            : this(textureImage, position, frameSize, currentFrame, zIndex, 5, 0, Vector2.Zero, scale) { }
+        public Sprite(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame, float zIndex, int frameOffset, float scale)
+            : this(textureImage, position, frameSize, currentFrame, zIndex, frameOffset, 0, Vector2.Zero, scale) { }
+
+        public Sprite(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame, 
+            float zIndex, int frameOffset, float rotation, Vector2 rotationOrigin, float scale)
         {
             this.textureImage = textureImage;
             this.position = position;
@@ -44,6 +53,8 @@ namespace PodkidnoiDurakGame
             this.zIndex = zIndex;
             this.rotation = rotation;
             this.rotationOrigin = rotationOrigin;
+            this.frameOffset = frameOffset;
+            this.scale = scale;
         }
 
         public virtual void Update(GameTime gameTime, Rectangle clientBounds)
@@ -57,10 +68,10 @@ namespace PodkidnoiDurakGame
                 textureImage,
                 position,
                 rectangle,
-                Color.Transparent,
+                Color.White,
                 rotation,
                 rotationOrigin,
-                1f,
+                scale,
                 SpriteEffects.None,
                 zIndex
                 );

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using PodkidnoiDurakGame.GameDesk;
 
 namespace PodkidnoiDurakGame
 {
@@ -9,23 +10,30 @@ namespace PodkidnoiDurakGame
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        SpriteManager spriteManager;
+
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
+            //graphics.IsFullScreen = true;
+            IsMouseVisible = true;
             Content.RootDirectory = "Content";
         }
 
 
         protected override void Initialize()
         {
+            spriteManager = new SpriteManager(this);
+            Components.Add(spriteManager);
+
             base.Initialize();
         }
 
 
         protected override void LoadContent()
         {
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            //spriteBatch = new SpriteBatch(GraphicsDevice);
         }
 
 

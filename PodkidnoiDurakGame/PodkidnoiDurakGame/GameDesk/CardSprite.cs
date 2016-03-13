@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using PodkidnoiDurakGame.Core;
 
 namespace PodkidnoiDurakGame
 {
@@ -18,9 +19,14 @@ namespace PodkidnoiDurakGame
 
         public CardSprite(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame, float zIndex)
             :base(textureImage, position, frameSize, currentFrame, zIndex){}
+        public CardSprite(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame, float zIndex, int frameOffset)
+            : base(textureImage, position, frameSize, currentFrame, zIndex, frameOffset) { }
+        public CardSprite(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame, float zIndex, float scale)
+            : base(textureImage, position, frameSize, currentFrame, zIndex, scale) { }
 
-        public CardSprite(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame, float zIndex, float rotation, Vector2 rotationOrigin)
-            : base(textureImage, position, frameSize, currentFrame, zIndex, rotation, rotationOrigin) { }
+        public CardSprite(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame,
+            float zIndex, int frameOffset, float rotation, Vector2 rotationOrigin, float scale)
+            : base(textureImage, position, frameSize, currentFrame, zIndex, frameOffset, rotation, rotationOrigin, scale) { }
 
         public override void Update(GameTime gameTime, Rectangle clientBounds)
         {
