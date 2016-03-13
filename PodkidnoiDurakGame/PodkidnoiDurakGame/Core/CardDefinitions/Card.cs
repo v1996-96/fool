@@ -10,9 +10,7 @@ namespace PodkidnoiDurakGame.Core
         public CardType CardType { get; set; }
 
         public CardSuit CardSuit { get; set; }
-
-        public bool IsTrump { get; set; }
-
+        
         public bool CanCover(Card covering)
         {
             if (covering.IsTrump && !this.IsTrump)

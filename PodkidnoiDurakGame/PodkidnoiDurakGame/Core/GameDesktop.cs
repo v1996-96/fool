@@ -16,8 +16,8 @@ namespace PodkidnoiDurakGame.Core
             {
                 if (_instance == null)
                     _instance = new GameDesktop();
-                
-                return _instance
+
+                return _instance;
             }
         }
         #endregion
@@ -75,15 +75,19 @@ namespace PodkidnoiDurakGame.Core
 
             CreateDeck();
             HandOutCards();
+            DecideWhoseTurn();
+
+            if (OnGameStarted != null) OnGameStarted();
         }
-
-
         public void StopGame()
         {
+            PlayerCards = new List<Card> { };
+            EnemyCards = new List<Card> { };
+            DescPairs = new List<CardPair> { };
+            Deck = new List<Card> { };
 
+            if (OnGameStopped != null) OnGameStopped();
         }
-
-
         public void BlockGame()
         {
             if (IsBlocked)
@@ -96,6 +100,15 @@ namespace PodkidnoiDurakGame.Core
                 this.IsBlocked = true;
                 if (OnGameBlocked != null) OnGameBlocked();
             }
+        }
+        #endregion
+
+        #region Decide whose turn
+        private void DecideWhoseTurn()
+        {
+            WhoseParty = PlayerType.Player;
+
+            // TODO: Write algorithm, which will make that decision
         }
         #endregion
 
@@ -116,11 +129,6 @@ namespace PodkidnoiDurakGame.Core
 
                     if (Enum.IsDefined(typeof(CardSuit), j))
                         card.CardSuit = (CardSuit)j;
-
-                    if (card.CardSuit == Trump)
-                        card.IsTrump = true;
-                    else
-                        card.IsTrump = false;
 
                     Deck.Add(card);
                 }
@@ -143,8 +151,7 @@ namespace PodkidnoiDurakGame.Core
             if (Deck.Count == 0)
                 return;
 
-            if (WhoseParty == null ||
-                WhoseParty == PlayerType.Player)
+            if (WhoseParty == PlayerType.Player)
             {
                 HandOutCardsToPlayer();
                 HandOutCardsToEnemy();
@@ -155,6 +162,9 @@ namespace PodkidnoiDurakGame.Core
                 HandOutCardsToEnemy();
                 HandOutCardsToPlayer();
             }
+
+            PlayerCards = SortCards(PlayerCards);
+            EnemyCards = SortCards(EnemyCards);
         }
         private void HandOutCardsToPlayer()
         {
@@ -171,6 +181,28 @@ namespace PodkidnoiDurakGame.Core
                 EnemyCards.Add(Deck[Deck.Count - 1]);
                 Deck.RemoveAt(Deck.Count - 1);
             }
+        }
+        #endregion
+
+        #region Cards sorting
+        private List<Card> SortCards(List<Card> cardList)
+        {
+            for (int i = 0; i < cardList.Count-1; i++)
+            {
+                for (int j = i+1; j < cardList.Count; j++)
+                {
+                    var firstPriority = ((cardList[i].CardSuit == Trump) ? 10 : (int)cardList[i].CardSuit + 1) * ((int)cardList[i].CardType +1);
+                    var secondPriority = ((cardList[j].CardSuit == Trump) ? 10 : (int)cardList[j].CardSuit + 1) * ((int)cardList[j].CardType +1);
+                    if (firstPriority > secondPriority)
+                    {
+                        var card = cardList[i];
+                        cardList[i] = cardList[j];
+                        cardList[j] = card;
+                    }
+                }
+            }
+
+            return cardList;
         }
         #endregion
 
