@@ -392,6 +392,14 @@ namespace PodkidnoiDurakGame.Core
                 // In this case we shall find out, could the thrown card beat the card, which was 
                 // thrown by player. Otherwise we refuse throwing.
 
+                if (IsBlocked) return;
+                switch (GameState)
+                {
+                    case GameState.Ready: GameState = GameState.Playing; break;
+                    case GameState.Finished: return;
+                    case GameState.Playing: break;
+                    default: return;
+                }
 
                 if (player == PlayerType.Player && WhoseParty == PlayerType.Player)
                 {
@@ -411,6 +419,7 @@ namespace PodkidnoiDurakGame.Core
                         PlayerCards.Remove(card);
                         DescPairs.Add(new CardPair { LowerCard = card });
                         if (OnThrowCard != null) OnThrowCard(player, card);
+                        CheckGameState();
                     }
                 }
                 if (player == PlayerType.Enemy && WhoseParty == PlayerType.Enemy)
@@ -431,6 +440,7 @@ namespace PodkidnoiDurakGame.Core
                         EnemyCards.Remove(card);
                         DescPairs.Add(new CardPair { LowerCard = card });
                         if (OnThrowCard != null) OnThrowCard(player, card);
+                        CheckGameState();
                     }
                 }
 
@@ -452,6 +462,7 @@ namespace PodkidnoiDurakGame.Core
                         PlayerCards.Remove(card);
                         DescPairs[DescPairs.Count - 1].UpperCard = card;
                         if (OnThrowCard != null) OnThrowCard(player, card);
+                        CheckGameState();
                     }
                 }
                 if (player == PlayerType.Enemy && WhoseParty == PlayerType.Player)
@@ -472,6 +483,7 @@ namespace PodkidnoiDurakGame.Core
                         EnemyCards.Remove(card);
                         DescPairs[DescPairs.Count - 1].UpperCard = card;
                         if (OnThrowCard != null) OnThrowCard(player, card);
+                        CheckGameState();
                     }
                 }
             }
@@ -544,6 +556,15 @@ namespace PodkidnoiDurakGame.Core
                 //
                 // In other cases we just refuse action
 
+                if (IsBlocked) return;
+                switch (GameState)
+                {
+                    case GameState.Ready: GameState = GameState.Playing; break;
+                    case GameState.Finished: return;
+                    case GameState.Playing: break;
+                    default: return;
+                }
+
                 if (WhoseParty == PlayerType.Player)
                 {
                     if (player != PlayerType.Player)
@@ -556,6 +577,7 @@ namespace PodkidnoiDurakGame.Core
                     HandOutCards();
 
                     if (OnPass != null) OnPass(player);
+                    CheckGameState();
                 }
 
                 if (WhoseParty == PlayerType.Enemy)
@@ -570,6 +592,7 @@ namespace PodkidnoiDurakGame.Core
                     HandOutCards();
 
                     if (OnPass != null) OnPass(player);
+                    CheckGameState();
                 }
             }
             #endregion
@@ -586,6 +609,15 @@ namespace PodkidnoiDurakGame.Core
                 // In this case we make the same thing
                 //
                 // In other cases we just refuse action
+
+                if (IsBlocked) return;
+                switch (GameState)
+                {
+                    case GameState.Ready: GameState = GameState.Playing; break;
+                    case GameState.Finished: return;
+                    case GameState.Playing: break;
+                    default: return;
+                }
 
                 if (WhoseParty == PlayerType.Player)
                 {
@@ -605,6 +637,7 @@ namespace PodkidnoiDurakGame.Core
                     DescPairs.Clear();
 
                     if (OnGetAll != null) OnGetAll(player);
+                    CheckGameState();
                 }
 
                 if (WhoseParty == PlayerType.Enemy)
@@ -625,6 +658,7 @@ namespace PodkidnoiDurakGame.Core
                     DescPairs.Clear();
 
                     if (OnGetAll != null) OnGetAll(player);
+                    CheckGameState();
                 }
             }
             #endregion
