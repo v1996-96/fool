@@ -5,9 +5,9 @@ using System.Text;
 
 namespace PodkidnoiDurakGame.Core.CardDefinitions
 {
-    struct CardPair
+    class CardPair
     {
         public Card LowerCard { get; set; }
-        public Card UpperCard { get; set; }
+        public Card? UpperCard { get; set; }
     }
 }

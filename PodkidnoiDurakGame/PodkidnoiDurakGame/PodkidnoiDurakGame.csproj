@@ -39,7 +39,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Core\CardDefinitions\CardPair.cs" />
+    <Compile Include="Core\GameAction.cs" />
     <Compile Include="Core\GameDesktop.cs" />
+    <Compile Include="Core\GameError.cs" />
     <Compile Include="Core\PlayerType.cs" />
     <Compile Include="GameDesk\CardSprite.cs" />
     <Compile Include="Core\CardDefinitions\Card.cs" />
