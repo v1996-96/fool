@@ -35,16 +35,16 @@ namespace PodkidnoiDurakGame
 
 
         public Sprite(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame, float zIndex)
-            : this(textureImage, position, frameSize, currentFrame, zIndex, 5, 0, Vector2.Zero, 1f) { }
+            : this(textureImage, position, frameSize, currentFrame, zIndex, 5, 1f, 0, Vector2.Zero) { }
         public Sprite(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame, float zIndex, int frameOffset)
-            : this(textureImage, position, frameSize, currentFrame, zIndex, frameOffset, 0, Vector2.Zero, 1f) { }
+            : this(textureImage, position, frameSize, currentFrame, zIndex, frameOffset, 1f, 0, Vector2.Zero) { }
         public Sprite(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame, float zIndex, float scale)
-            : this(textureImage, position, frameSize, currentFrame, zIndex, 5, 0, Vector2.Zero, scale) { }
+            : this(textureImage, position, frameSize, currentFrame, zIndex, 5, scale, 0, Vector2.Zero) { }
         public Sprite(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame, float zIndex, int frameOffset, float scale)
-            : this(textureImage, position, frameSize, currentFrame, zIndex, frameOffset, 0, Vector2.Zero, scale) { }
+            : this(textureImage, position, frameSize, currentFrame, zIndex, frameOffset, scale, 0, Vector2.Zero) { }
 
         public Sprite(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame, 
-            float zIndex, int frameOffset, float rotation, Vector2 rotationOrigin, float scale)
+            float zIndex, int frameOffset, float scale, float rotation, Vector2 rotationOrigin)
         {
             this.textureImage = textureImage;
             this.position = position;

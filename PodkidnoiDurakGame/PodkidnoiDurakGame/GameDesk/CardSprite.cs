@@ -25,8 +25,8 @@ namespace PodkidnoiDurakGame
             : base(textureImage, position, frameSize, currentFrame, zIndex, scale) { }
 
         public CardSprite(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame,
-            float zIndex, int frameOffset, float rotation, Vector2 rotationOrigin, float scale)
-            : base(textureImage, position, frameSize, currentFrame, zIndex, frameOffset, rotation, rotationOrigin, scale) { }
+            float zIndex, int frameOffset, float scale, float rotation, Vector2 rotationOrigin)
+            : base(textureImage, position, frameSize, currentFrame, zIndex, frameOffset, scale, rotation, rotationOrigin) { }
 
         public override void Update(GameTime gameTime, Rectangle clientBounds)
         {
