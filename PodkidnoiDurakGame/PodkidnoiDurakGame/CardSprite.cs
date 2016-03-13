@@ -8,18 +8,18 @@ using System.Text;
 
 namespace PodkidnoiDurakGame
 {
-    class Card : Sprite
+    class CardSprite : Sprite
     {
         public override Vector2 direction { set; get; }
 
-        public event Action<Card> OnClick;
-        public event Action<Card> OnHover;
+        public event Action<CardSprite> OnClick;
+        public event Action<CardSprite> OnHover;
 
 
-        public Card(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame, float zIndex)
+        public CardSprite(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame, float zIndex)
             :base(textureImage, position, frameSize, currentFrame, zIndex){}
 
-        public Card(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame, float zIndex, float rotation, Vector2 rotationOrigin)
+        public CardSprite(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame, float zIndex, float rotation, Vector2 rotationOrigin)
             : base(textureImage, position, frameSize, currentFrame, zIndex, rotation, rotationOrigin) { }
 
         public override void Update(GameTime gameTime, Rectangle clientBounds)

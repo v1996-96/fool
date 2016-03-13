@@ -38,7 +38,10 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Card.cs" />
+    <Compile Include="CardSprite.cs" />
+    <Compile Include="Core\Card.cs" />
+    <Compile Include="Core\CardSuit.cs" />
+    <Compile Include="Core\CardType.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
