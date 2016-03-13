@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using PodkidnoiDurakGame.Core;
 using PodkidnoiDurakGame.GameDesk;
 
 namespace PodkidnoiDurakGame
@@ -8,20 +9,27 @@ namespace PodkidnoiDurakGame
     public class Game1 : Game
     {
         GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+        SpriteManager spriteManager; // User interface was transmitted there
+        GameDesktop gameDesktop = GameDesktop.Instance;
 
-        SpriteManager spriteManager;
+        const string TITLE = "Подкидной дурак v3.0";
 
+        // There we shall write logic to connect WPF, players, desktops, AI and network
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
-            //graphics.IsFullScreen = true;
+
+            Window.AllowAltF4 = true;
+            Window.Title = TITLE;
+            Window.AllowUserResizing = true;
             IsMouseVisible = true;
             Content.RootDirectory = "Content";
         }
 
 
+
+        #region Monogame gameloop
         protected override void Initialize()
         {
             spriteManager = new SpriteManager(this);
@@ -29,20 +37,8 @@ namespace PodkidnoiDurakGame
 
             base.Initialize();
         }
-
-
-        protected override void LoadContent()
-        {
-            //spriteBatch = new SpriteBatch(GraphicsDevice);
-        }
-
-
-        protected override void UnloadContent()
-        {
-            
-        }
-
-
+        protected override void LoadContent() {}
+        protected override void UnloadContent() {}
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -50,13 +46,12 @@ namespace PodkidnoiDurakGame
 
             base.Update(gameTime);
         }
-
-
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.White);
 
             base.Draw(gameTime);
         }
+        #endregion
     }
 }

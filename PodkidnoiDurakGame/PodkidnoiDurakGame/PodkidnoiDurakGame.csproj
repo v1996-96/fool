@@ -45,15 +45,15 @@
     <Compile Include="Core\GameDefinitions\GameError.cs" />
     <Compile Include="Core\GameDefinitions\GameState.cs" />
     <Compile Include="Core\GameDefinitions\PlayerType.cs" />
-    <Compile Include="GameDesk\CardSprite.cs" />
+    <Compile Include="UI\CardSprite.cs" />
     <Compile Include="Core\CardDefinitions\Card.cs" />
     <Compile Include="Core\CardDefinitions\CardSuit.cs" />
     <Compile Include="Core\CardDefinitions\CardType.cs" />
     <Compile Include="Game1.cs" />
-    <Compile Include="GameDesk\SpriteManager.cs" />
+    <Compile Include="UI\SpriteManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="GameDesk\Sprite.cs" />
+    <Compile Include="UI\Sprite.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

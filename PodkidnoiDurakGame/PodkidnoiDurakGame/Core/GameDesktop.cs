@@ -65,6 +65,8 @@ namespace PodkidnoiDurakGame.Core
         public event Action OnGameStopped;
         public event Action OnGameBlocked;
         public event Action OnGameUnBlocked;
+        public event Action OnDeckCreated;
+        public event Action OnCardsHandOut;
         public event Action<GameResult> OnGameFinished;
         public event Action<GameAction, GameError, string> OnActionRefused;
         public event Action<GameError, string> OnGameError;
@@ -272,9 +274,6 @@ namespace PodkidnoiDurakGame.Core
         #region Work with deck
         private void CreateDeck()
         {
-            // Get random trump suit
-            Trump = (CardSuit)_rnd.Next(0, MaxCardSuitIndex);
-
             // Create Deck
             for (int i = 0; i < MaxCardTypeIndex; i++)
             {
@@ -299,6 +298,11 @@ namespace PodkidnoiDurakGame.Core
                 Deck[i] = Deck[pos];
                 Deck[pos] = x;
             }
+
+            // The first card suit in the deck is a trump suit
+            Trump = Deck[0].CardSuit;
+
+            if (OnDeckCreated != null) OnDeckCreated();
         }
         #endregion
 
@@ -324,6 +328,8 @@ namespace PodkidnoiDurakGame.Core
 
             PlayerCards = SortCards(PlayerCards);
             EnemyCards = SortCards(EnemyCards);
+
+            if (OnCardsHandOut != null) OnCardsHandOut();
         }
         private void HandOutCardsToPlayer()
         {
