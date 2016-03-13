@@ -5,11 +5,11 @@ using System.Text;
 
 namespace PodkidnoiDurakGame.Core
 {
-    public enum CardSuit
+    public enum CardSuit:int
     {
-        Heart,
-        Diamond,
-        Club,
-        Spade
+        Heart = 0,
+        Diamond = 1,
+        Club = 2,
+        Spade = 3
     }
 }

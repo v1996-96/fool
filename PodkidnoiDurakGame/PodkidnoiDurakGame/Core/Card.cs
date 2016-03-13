@@ -27,15 +27,5 @@ namespace PodkidnoiDurakGame.Core
 
             return false;
         }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
-        public override bool Equals(Card obj)
-        {
-            return (CardType == obj.CardType) && (CardSuit == obj.CardSuit);
-        }
     }
 }

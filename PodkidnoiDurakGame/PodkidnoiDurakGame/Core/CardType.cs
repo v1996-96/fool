@@ -5,16 +5,16 @@ using System.Text;
 
 namespace PodkidnoiDurakGame.Core
 {
-    public enum CardType
+    public enum CardType:int
     {
-        Six,
-        Seven,
-        Eight,
-        Nine,
-        Ten,
-        Jack,
-        Queen,
-        King,
-        Ace
+        Six = 0,
+        Seven = 1,
+        Eight = 2,
+        Nine = 3,
+        Ten = 4,
+        Jack = 5,
+        Queen = 6,
+        King = 7,
+        Ace = 8
     }
 }
