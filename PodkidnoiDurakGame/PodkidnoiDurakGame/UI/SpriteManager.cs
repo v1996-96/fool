@@ -18,12 +18,9 @@ namespace PodkidnoiDurakGame.GameDesk
 
         SpriteBatch spriteBatch;
         Texture2D spriteList;
-        GameDesktop gameDesktop;
 
         public SpriteManager(Game game)
             :base(game){}
-        public SpriteManager(Game game, GameDesktop gameDesktop)
-            : base(game) { this.gameDesktop = gameDesktop; }
 
         protected override void LoadContent()
         {

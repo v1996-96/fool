@@ -26,10 +26,6 @@ namespace PodkidnoiDurakGame
             IsMouseVisible = true;
             Content.RootDirectory = "Content";
         }
-
-
-
-        #region Monogame gameloop
         protected override void Initialize()
         {
             spriteManager = new SpriteManager(this);
@@ -37,6 +33,9 @@ namespace PodkidnoiDurakGame
 
             base.Initialize();
         }
+
+
+        #region Monogame gameloop
         protected override void LoadContent() {}
         protected override void UnloadContent() {}
         protected override void Update(GameTime gameTime)
