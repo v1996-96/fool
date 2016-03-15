@@ -50,7 +50,8 @@
     <Compile Include="Core\GameGateway.cs" />
     <Compile Include="Core\PlayerDefinitions\IPlayer.cs" />
     <Compile Include="Core\PlayerDefinitions\Player.cs" />
-    <Compile Include="UI\CardSprite.cs" />
+    <Compile Include="UI\Sprite\CardPairSprite.cs" />
+    <Compile Include="UI\Sprite\CardSprite.cs" />
     <Compile Include="Core\CardDefinitions\Card.cs" />
     <Compile Include="Core\CardDefinitions\CardSuit.cs" />
     <Compile Include="Core\CardDefinitions\CardType.cs" />
@@ -58,7 +59,7 @@
     <Compile Include="UI\SpriteManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UI\Sprite.cs" />
+    <Compile Include="UI\Sprite\Sprite.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

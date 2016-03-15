@@ -11,10 +11,11 @@ namespace PodkidnoiDurakGame
 {
     class CardSprite : Sprite
     {
+        public Card Card { get; set; }
         public override Vector2 direction { set; get; }
 
-        public event Action<CardSprite> OnClick;
-        public event Action<CardSprite> OnHover;
+        public event Action<Card> OnClick;
+        public event Action<Card> OnHover;
 
 
         public CardSprite(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame, float zIndex)
@@ -33,17 +34,16 @@ namespace PodkidnoiDurakGame
             MouseState mouseState = Mouse.GetState();
             if (controlArea.Contains(mouseState.Position) &&
                 OnHover != null)
-                OnHover(this);
+                OnHover(Card);
 
             if (controlArea.Contains(mouseState.Position) && 
                 mouseState.LeftButton == ButtonState.Pressed &&
                 OnClick != null)
-                OnClick(this);
+                OnClick(Card);
 
 
             base.Update(gameTime);
         }
-
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             base.Draw(gameTime, spriteBatch);

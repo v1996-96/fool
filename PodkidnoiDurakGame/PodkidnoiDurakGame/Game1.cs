@@ -74,7 +74,7 @@ namespace PodkidnoiDurakGame
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.White);
+            GraphicsDevice.Clear(Color.ForestGreen);
 
             base.Draw(gameTime);
         }
