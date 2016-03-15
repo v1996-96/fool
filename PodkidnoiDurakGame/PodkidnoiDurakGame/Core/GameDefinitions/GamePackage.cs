@@ -6,9 +6,8 @@ using System.Text;
 
 namespace PodkidnoiDurakGame.Core.GameDefinitions
 {
-    public class GamePackage
+    class GamePackage
     {
-        // Card lists
         public CardSuit Trump { get; set; }
         public List<Card> Deck { get; set; }
         public List<CardPair> DescPairs { get; set; }

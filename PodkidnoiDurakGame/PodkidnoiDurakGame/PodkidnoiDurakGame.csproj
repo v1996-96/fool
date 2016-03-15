@@ -38,6 +38,7 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Core\ArtificialIntelligence\AINormal.cs" />
     <Compile Include="Core\CardDefinitions\CardPair.cs" />
     <Compile Include="Core\GameDefinitions\GameAction.cs" />
     <Compile Include="Core\GameDefinitions\GamePackage.cs" />
@@ -46,6 +47,9 @@
     <Compile Include="Core\GameDefinitions\GameError.cs" />
     <Compile Include="Core\GameDefinitions\GameState.cs" />
     <Compile Include="Core\GameDefinitions\PlayerType.cs" />
+    <Compile Include="Core\GameGateway.cs" />
+    <Compile Include="Core\PlayerDefinitions\IPlayer.cs" />
+    <Compile Include="Core\PlayerDefinitions\Player.cs" />
     <Compile Include="UI\CardSprite.cs" />
     <Compile Include="Core\CardDefinitions\Card.cs" />
     <Compile Include="Core\CardDefinitions\CardSuit.cs" />

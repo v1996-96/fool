@@ -101,7 +101,7 @@ namespace PodkidnoiDurakGame.Core
 
             if (OnGameStopped != null) OnGameStopped();
         }
-        public void BlockGame()
+        public void TriggerBlockGame()
         {
             if (IsBlocked)
             {
@@ -113,6 +113,29 @@ namespace PodkidnoiDurakGame.Core
                 this.IsBlocked = true;
                 if (OnGameBlocked != null) OnGameBlocked();
             }
+        }
+        public GamePackage GetGameData()
+        {
+            return new GamePackage { 
+                Deck = this.Deck,
+                DescPairs = this.DescPairs,
+                Trump = this.Trump,
+                PlayerCards = this.PlayerCards,
+                EnemyCards = this.EnemyCards
+            };
+        }
+        public void SetGameData(GamePackage gamePackage)
+        {
+            if (Trump != gamePackage.Trump ||
+                PlayerCards != gamePackage.PlayerCards)
+            {
+                if (OnGameError != null) OnGameError(GameError.Error, "Trump suit and player's card list do not match");
+                return;
+            }
+
+            Deck = gamePackage.Deck;
+            EnemyCards = gamePackage.EnemyCards;
+            DescPairs = gamePackage.DescPairs;
         }
         private void CheckGameState()
         {
