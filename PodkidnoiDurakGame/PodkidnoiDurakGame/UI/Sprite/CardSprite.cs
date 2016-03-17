@@ -12,8 +12,12 @@ namespace PodkidnoiDurakGame
     class CardSprite : Sprite
     {
         public Card Card { get; set; }
-        public override Vector2 direction { set; get; }
 
+        private Vector2? destination;
+        private Vector2 posIncrement;
+
+        public event Action<Card> OnAnimationStart;
+        public event Action<Card> OnAnimationEnd;
         public event Action<Card> OnClick;
         public event Action<Card> OnHover;
 
@@ -29,6 +33,14 @@ namespace PodkidnoiDurakGame
             float zIndex, int frameOffset, float scale, float rotation, Vector2 rotationOrigin)
             : base(textureImage, position, frameSize, currentFrame, zIndex, frameOffset, scale, rotation, rotationOrigin) { }
 
+        public void Animate(Vector2 destination, float speed)
+        {
+            this.destination = destination;
+            this.posIncrement = (destination - position)/speed;
+
+            if (OnAnimationStart != null) OnAnimationStart(Card);
+        }
+
         public override void Update(GameTime gameTime)
         {
             MouseState mouseState = Mouse.GetState();
@@ -41,6 +53,19 @@ namespace PodkidnoiDurakGame
                 OnClick != null)
                 OnClick(Card);
 
+            if (destination != null)
+            {
+                if (destination == position)
+                {
+                    destination = null;
+
+                    if (OnAnimationEnd != null) OnAnimationEnd(Card);
+                }
+                else
+                {
+                    destination += posIncrement;
+                }
+            }
 
             base.Update(gameTime);
         }

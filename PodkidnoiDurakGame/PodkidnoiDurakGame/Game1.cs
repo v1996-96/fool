@@ -36,12 +36,32 @@ namespace PodkidnoiDurakGame
 
 
 
-        private void StartGame(/* We shall specify game type */)
+        private void StartGame()
         {
             _player = new Player();
             _enemy = new AINormal();
+
+            // There we connect users and game desktop
             gameGateway.InitializeConnections(ref _player, ref _enemy);
+
+            // There we connect game desktop and UI
+            gameGateway.GameDesktop.OnDeckCreated += () =>
+            {
+                spriteManager.RenewWindowPackage(gameGateway.GameDesktop.GetGameData());
+            };
+            gameGateway.GameDesktop.OnCardsHandOut += () =>
+            {
+                spriteManager.RenewWindowPackage(gameGateway.GameDesktop.GetGameData());
+            };
+            spriteManager.OnUserBlocked += () =>
+            {
+                gameGateway.GameDesktop.TriggerBlockGame();
+            };
+
+            // There we start game in game desktop
             gameGateway.GameDesktop.StartGame();
+
+            // There we transmit game packages to players
             gameGateway.GetGamePackages(ref _player);
             gameGateway.GetGamePackages(ref _enemy);
         }
@@ -50,12 +70,11 @@ namespace PodkidnoiDurakGame
 
         protected override void Initialize()
         {
-            // Blocking call to login window
-
-            StartGame();
-
-            spriteManager = new SpriteManager(this, ref _player);
+            spriteManager = new SpriteManager(this);
             Components.Add(spriteManager);
+            
+            // For test purposes
+            StartGame();
 
             base.Initialize();
         }

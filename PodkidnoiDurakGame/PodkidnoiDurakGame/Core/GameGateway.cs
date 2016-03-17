@@ -1,4 +1,6 @@
-﻿using PodkidnoiDurakGame.Core.PlayerDefinitions;
+﻿using PodkidnoiDurakGame.Core.CardDefinitions;
+using PodkidnoiDurakGame.Core.GameDefinitions;
+using PodkidnoiDurakGame.Core.PlayerDefinitions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

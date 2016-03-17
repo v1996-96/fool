@@ -40,6 +40,8 @@
   <ItemGroup>
     <Compile Include="Core\ArtificialIntelligence\AINormal.cs" />
     <Compile Include="Core\CardDefinitions\CardPair.cs" />
+    <Compile Include="Core\CardDefinitions\CardPosition.cs" />
+    <Compile Include="Core\CardDefinitions\CardUI.cs" />
     <Compile Include="Core\GameDefinitions\GameAction.cs" />
     <Compile Include="Core\GameDefinitions\GamePackage.cs" />
     <Compile Include="Core\GameDefinitions\GameResult.cs" />
@@ -50,7 +52,6 @@
     <Compile Include="Core\GameGateway.cs" />
     <Compile Include="Core\PlayerDefinitions\IPlayer.cs" />
     <Compile Include="Core\PlayerDefinitions\Player.cs" />
-    <Compile Include="UI\Sprite\CardPairSprite.cs" />
     <Compile Include="UI\Sprite\CardSprite.cs" />
     <Compile Include="Core\CardDefinitions\Card.cs" />
     <Compile Include="Core\CardDefinitions\CardSuit.cs" />

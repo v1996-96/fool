@@ -21,7 +21,6 @@ namespace PodkidnoiDurakGame
         protected float zIndex = 0;
         protected float scale = 1f;
 
-        public abstract Vector2 direction { set; get; }
         protected Rectangle rectangle
         {
             get
