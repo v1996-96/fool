@@ -10,6 +10,7 @@ namespace PodkidnoiDurakGame.Core.CardDefinitions
         Player,
         Enemy,
         Desc,
-        Deck
+        Deck,
+        OutOfDesc
     }
 }

@@ -304,10 +304,22 @@ namespace PodkidnoiDurakGame.Core
                 {
                     Card card = new Card();
                     if (Enum.IsDefined(typeof(CardType), i))
+                    {
                         card.CardType = (CardType)i;
+                    }
+                    else
+                    {
+                        if (OnGameError != null) OnGameError(GameError.FatalError, "Card index not found"); return;
+                    }
 
                     if (Enum.IsDefined(typeof(CardSuit), j))
+                    {
                         card.CardSuit = (CardSuit)j;
+                    }
+                    else
+                    {
+                        if (OnGameError != null) OnGameError(GameError.FatalError, "Card index not found"); return;
+                    }
 
                     Deck.Add(card);
                 }

@@ -14,5 +14,15 @@ namespace PodkidnoiDurakGame.Core.CardDefinitions
         public CardPosition CardPosition { get; set; }
 
         public int Index { get; set; }
+        
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            return ((obj is CardUI) || (obj is Card)) ? (this.CardSuit == ((Card)obj).CardSuit && this.CardType == ((Card)obj).CardType) : false;
+        }
     }
 }
