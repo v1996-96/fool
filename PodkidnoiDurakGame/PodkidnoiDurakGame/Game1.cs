@@ -27,9 +27,13 @@ namespace PodkidnoiDurakGame
         {
             // Init game window
             graphics = new GraphicsDeviceManager(this);
+            graphics.IsFullScreen = false;
+            graphics.PreferredBackBufferWidth = 900;
+            graphics.PreferredBackBufferHeight = 599;
+
             Window.AllowAltF4 = true;
             Window.Title = TITLE;
-            Window.AllowUserResizing = true;
+            Window.AllowUserResizing = false;
             IsMouseVisible = true;
             Content.RootDirectory = "Content";
         }
@@ -52,10 +56,6 @@ namespace PodkidnoiDurakGame
             gameGateway.GameDesktop.OnCardsHandOut += () =>
             {
                 spriteManager.RenewWindowPackage(gameGateway.GameDesktop.GetGameData());
-            };
-            spriteManager.OnUserBlocked += () =>
-            {
-                gameGateway.GameDesktop.TriggerBlockGame();
             };
 
             // There we start game in game desktop

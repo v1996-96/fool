@@ -6,20 +6,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using PodkidnoiDurakGame.Core;
+using PodkidnoiDurakGame.Core.CardDefinitions;
 
 namespace PodkidnoiDurakGame
 {
     class CardSprite : Sprite
     {
-        public Card Card { get; set; }
+        public bool IsAnimated
+        {
+            get
+            {
+                return destination == null;
+            }
+        }
+
+        public CardUI Card { get; set; }
 
         private Vector2? destination;
         private Vector2 posIncrement;
 
-        public event Action<Card> OnAnimationStart;
-        public event Action<Card> OnAnimationEnd;
-        public event Action<Card> OnClick;
-        public event Action<Card> OnHover;
+        public event Action<CardUI> OnAnimationStart;
+        public event Action<CardUI> OnAnimationEnd;
+        public event Action<CardUI> OnClick;
+        public event Action<CardUI> OnHover;
 
 
         public CardSprite(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame, float zIndex)
@@ -40,7 +49,6 @@ namespace PodkidnoiDurakGame
 
             if (OnAnimationStart != null) OnAnimationStart(Card);
         }
-
         public override void Update(GameTime gameTime)
         {
             MouseState mouseState = Mouse.GetState();
