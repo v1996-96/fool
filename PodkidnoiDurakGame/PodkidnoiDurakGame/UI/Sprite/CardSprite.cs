@@ -16,7 +16,7 @@ namespace PodkidnoiDurakGame
         {
             get
             {
-                return destination == null;
+                return destination != null;
             }
         }
 
@@ -41,6 +41,25 @@ namespace PodkidnoiDurakGame
         public CardSprite(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame,
             float zIndex, int frameOffset, float scale, float rotation, Vector2 rotationOrigin)
             : base(textureImage, position, frameSize, currentFrame, zIndex, frameOffset, scale, rotation, rotationOrigin) { }
+
+
+        public void Reset(Vector2 position, Texture2D texture, Point currentFrame, float rotation, float zIndex, float resize)
+        {
+            this.position = position;
+            this.textureImage = texture;
+            this.rotation = rotation;
+            this.zIndex = zIndex;
+            this.scale = scale;
+            this.currentFrame = currentFrame;
+        }
+        public void Reset(Texture2D texture, Point currentFrame, float rotation, float zIndex, float resize)
+        {
+            this.textureImage = texture;
+            this.rotation = rotation;
+            this.zIndex = zIndex;
+            this.scale = scale;
+            this.currentFrame = currentFrame;
+        }
 
         public void Animate(Vector2 destination, float speed)
         {

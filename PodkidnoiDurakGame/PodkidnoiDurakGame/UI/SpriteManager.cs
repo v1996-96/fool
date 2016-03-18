@@ -62,7 +62,7 @@ namespace PodkidnoiDurakGame.GameDesk
         const float DeckCardsRightOffset = 20;
         const float DeckCardOffset = 1;
         // trump card
-        const float TrumpCardTopOffset = 15;
+        const float TrumpCardTopOffset = 25;
         const float TrumpCardToDeck = 40;
         // z-index
         const float PlayerCardsMinZIndex = 0f;
@@ -82,32 +82,32 @@ namespace PodkidnoiDurakGame.GameDesk
             get { return CardResizeIndex * SpriteFrameHeight; }
         }
 
-        private void CalculateNewSpriteState(CardSprite sprite, CardUI ui, out Vector2 position, out Texture2D texture, out float rotation, out float zIndex)
+        private void CalculateNewSpriteState(CardUI ui, out Vector2 position, out Texture2D texture, out float rotation, out float zIndex)
         {
             switch (ui.CardPosition)
             {
                 case CardPosition.Player:
-                    CalculateSpriteState_Enemy(sprite, ui, out position, out texture, out rotation, out zIndex);
+                    CalculateSpriteState_Enemy(ui, out position, out texture, out rotation, out zIndex);
                     break;
                 case CardPosition.Enemy:
-                    CalculateSpriteState_Player(sprite, ui, out position, out texture, out rotation, out zIndex);
+                    CalculateSpriteState_Player(ui, out position, out texture, out rotation, out zIndex);
                     break;
                 case CardPosition.Desc:
-                    CalculateSpriteState_Desc(sprite, ui, out position, out texture, out rotation, out zIndex);
+                    CalculateSpriteState_Desc(ui, out position, out texture, out rotation, out zIndex);
                     break;
                 case CardPosition.Deck:
-                    CalculateSpriteState_Deck(sprite, ui, out position, out texture, out rotation, out zIndex);
+                    CalculateSpriteState_Deck(ui, out position, out texture, out rotation, out zIndex);
                     break;
                 case CardPosition.OutOfDesc:
-                    CalculateSpriteState_OutOfDesc(sprite, ui, out position, out texture, out rotation, out zIndex);
+                    CalculateSpriteState_OutOfDesc(ui, out position, out texture, out rotation, out zIndex);
                     break;
                 default:
-                    CalculateSpriteState_OutOfDesc(sprite, ui, out position, out texture, out rotation, out zIndex);
+                    CalculateSpriteState_OutOfDesc(ui, out position, out texture, out rotation, out zIndex);
                     break;
             }
         }
 
-        private void CalculateSpriteState_Enemy(CardSprite sprite, CardUI ui, out Vector2 position, out Texture2D texture, out float rotation, out float zIndex)
+        private void CalculateSpriteState_Enemy(CardUI ui, out Vector2 position, out Texture2D texture, out float rotation, out float zIndex)
         {
             var blockWidth = (_countEnemyCards - 1) * MaxCardOffset + _countEnemyCards * CurrentGameCardWidth;
             var cardsSpace = WindowWidth - 2*HorizontalWindowPadding;
@@ -130,7 +130,7 @@ namespace PodkidnoiDurakGame.GameDesk
             zIndex = PlayerCardsMinZIndex + ui.Index * ((PlayerCardsMaxZIndex - PlayerCardsMinZIndex) / _countEnemyCards);
         }
 
-        private void CalculateSpriteState_Player(CardSprite sprite, CardUI ui, out Vector2 position, out Texture2D texture, out float rotation, out float zIndex)
+        private void CalculateSpriteState_Player(CardUI ui, out Vector2 position, out Texture2D texture, out float rotation, out float zIndex)
         {
             var blockWidth = (_countPlayerCards - 1) * MaxCardOffset + _countPlayerCards * CurrentGameCardWidth;
             var cardsSpace = WindowWidth - 2 * HorizontalWindowPadding;
@@ -153,7 +153,7 @@ namespace PodkidnoiDurakGame.GameDesk
             zIndex = PlayerCardsMinZIndex + ui.Index * ((PlayerCardsMaxZIndex - PlayerCardsMinZIndex) / _countPlayerCards);
         }
 
-        private void CalculateSpriteState_Desc(CardSprite sprite, CardUI ui, out Vector2 position, out Texture2D texture, out float rotation, out float zIndex)
+        private void CalculateSpriteState_Desc(CardUI ui, out Vector2 position, out Texture2D texture, out float rotation, out float zIndex)
         {   
             var y = VerticalWindowPadding + CurrentGameCardHeight + DescTopOffset;
             y += ((ui.Index+1) % 2 == 0) ? DescVerticalCardOffset : 0;
@@ -167,7 +167,7 @@ namespace PodkidnoiDurakGame.GameDesk
             zIndex = ((ui.Index + 1) % 2 == 0) ? DescUpperCardZIndex : DescLowerCardZIndex;
         }
 
-        private void CalculateSpriteState_Deck(CardSprite sprite, CardUI ui, out Vector2 position, out Texture2D texture, out float rotation, out float zIndex)
+        private void CalculateSpriteState_Deck(CardUI ui, out Vector2 position, out Texture2D texture, out float rotation, out float zIndex)
         {
             float x = 0;
             float y = 0;
@@ -175,14 +175,14 @@ namespace PodkidnoiDurakGame.GameDesk
             if (ui.Index == 0)
             {
                 x = WindowWidth - HorizontalWindowPadding - DeckCardsRightOffset;
-                y = VerticalWindowPadding + CurrentGameCardHeight + DescTopOffset;
+                y = VerticalWindowPadding + CurrentGameCardHeight + DescTopOffset + TrumpCardTopOffset;
                 zIndex = TrumpCardZIndex;
-                rotation = 0.5f;
+                rotation = MathHelper.Pi/2;
                 texture = _spriteList;
             }
             else
             {
-                x = WindowWidth - HorizontalWindowPadding - DeckCardsRightOffset + ui.Index * DeckCardOffset;
+                x = WindowWidth - HorizontalWindowPadding - CurrentGameCardWidth - DeckCardsRightOffset + ui.Index * DeckCardOffset;
                 y = VerticalWindowPadding + CurrentGameCardHeight + DescTopOffset + ui.Index * DeckCardOffset;
                 zIndex = DeckCardsMinZIndex + ui.Index * 0.001f;
                 rotation = 0;
@@ -192,7 +192,7 @@ namespace PodkidnoiDurakGame.GameDesk
             position = new Vector2(x, y);
         }
 
-        private void CalculateSpriteState_OutOfDesc(CardSprite sprite, CardUI ui, out Vector2 position, out Texture2D texture, out float rotation, out float zIndex)
+        private void CalculateSpriteState_OutOfDesc(CardUI ui, out Vector2 position, out Texture2D texture, out float rotation, out float zIndex)
         {
             position = new Vector2(-1 * CurrentGameCardWidth - 10, 0);
             texture = _backSprite;
@@ -203,44 +203,7 @@ namespace PodkidnoiDurakGame.GameDesk
         #endregion
 
 
-        public SpriteManager(Game game)
-            : base(game)
-        {
-            _cardUIList = new List<CardUI> { };
-            _cardSpriteList = new List<CardSprite> { };
-            ShowCards = false;
-        }
-
-        public void ResetCardsOnWindow(List<Card> cardList)
-        {
-            _cardUIList = new List<CardUI> { };
-            _cardSpriteList = new List<CardSprite> { };
-
-            cardList.ForEach((card) =>
-            {
-                _cardSpriteList.Add(new CardSprite(
-                        _backSprite,
-                        Vector2.Zero,
-                        new Point(SpriteFrameWidth, SpriteFrameHeight),
-                        new Point((int)card.CardSuit, (int)card.CardType),
-                        0, 1f
-                    ));
-            });
-
-            ShowCards = false;
-        }
-        public bool RenewWindowPackage(GamePackage package)
-        {
-
-            _cardUIList = ConvertPackageToUI(package, ref _countPlayerCards, ref _countEnemyCards);
-
-            if (SpritesAreAnimated) return false;
-
-            
-
-            return true;
-        }
-
+        #region Converter
         public List<CardUI> ConvertPackageToUI(GamePackage package, ref int countPlayerCards, ref int countEnemyCards)
         {
             countPlayerCards = package.PlayerCards.Count;
@@ -248,8 +211,10 @@ namespace PodkidnoiDurakGame.GameDesk
 
             List<CardUI> cardUIList = new List<CardUI> { };
             int index = 0;
-            package.Deck.ForEach((card) => { 
-                cardUIList.Add(new CardUI { 
+            package.Deck.ForEach((card) =>
+            {
+                cardUIList.Add(new CardUI
+                {
                     CardPosition = CardPosition.Deck,
                     CardSuit = card.CardSuit,
                     CardType = card.CardType,
@@ -303,6 +268,93 @@ namespace PodkidnoiDurakGame.GameDesk
             });
             return cardUIList;
         }
+#endregion
+
+
+        public SpriteManager(Game game)
+            : base(game)
+        {
+            _cardUIList = new List<CardUI> { };
+            _cardSpriteList = new List<CardSprite> { };
+            ShowCards = false;
+        }
+
+        public void ResetCardsOnWindow(List<Card> cardList)
+        {
+            _cardUIList = new List<CardUI> { };
+            _cardSpriteList = new List<CardSprite> { };
+
+            cardList.ForEach((card) =>
+            {
+                var c = new CardSprite(
+                    _backSprite,
+                    Vector2.Zero,
+                    new Point(SpriteFrameWidth, SpriteFrameHeight),
+                    Point.Zero,
+                    0,
+                    CardResizeIndex
+                );
+                c.Card = new CardUI
+                {
+                    CardPosition = CardPosition.Deck,
+                    CardType = card.CardType,
+                    CardSuit = card.CardSuit,
+                    Index = 0
+                };
+                _cardSpriteList.Add(c);
+            });
+
+            ShowCards = false;
+        }
+        public void RenewWindowPackage(GamePackage package)
+        {
+            _cardUIList = ConvertPackageToUI(package, ref _countPlayerCards, ref _countEnemyCards);
+
+            if (SpritesAreAnimated) return;
+
+            if (_cardSpriteList.Count == 0) return;
+
+            Vector2 p = new Vector2(0, 0);
+
+            for (var i = 0; i < _cardSpriteList.Count; i++)
+            {
+                for (var j = 0; j < _cardUIList.Count; j++)
+                {
+                    if (_cardSpriteList[i].Card.CardSuit == _cardUIList[j].CardSuit &&
+                        _cardSpriteList[i].Card.CardType == _cardUIList[j].CardType)
+                    {
+                        Vector2 position;
+                        Texture2D texture;
+                        float rotation;
+                        float zIndex;
+
+                        CalculateNewSpriteState(_cardUIList[j], out position, out texture, out rotation, out zIndex);
+
+                        if (texture == _backSprite)
+                        {
+                            _cardSpriteList[i].Reset(position, texture, Point.Zero, rotation, zIndex, CardResizeIndex);
+                            //_cardSpriteList[i].Reset(texture, Point.Zero, rotation, zIndex, CardResizeIndex);
+                        }
+                        else
+                        {
+                            _cardSpriteList[i].Reset(position, texture, new Point((int)_cardUIList[j].CardSuit, (int)_cardUIList[j].CardType), rotation, zIndex, CardResizeIndex);
+                            //_cardSpriteList[i].Reset(texture, new Point((int)_cardUIList[j].CardSuit, (int)_cardUIList[j].CardType), rotation, zIndex, CardResizeIndex);
+                        }
+
+                        //if (position != _cardSpriteList[i].Position)
+                        //{
+                        //    _cardSpriteList[i].Animate(position, 10);
+                        //}
+                    }
+                }
+            }
+
+            ShowCards = true;
+        }
+
+        
+
+
 
 
         protected override void LoadContent()
@@ -323,7 +375,7 @@ namespace PodkidnoiDurakGame.GameDesk
 
         public override void Draw(GameTime gameTime)
         {
-            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
+            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
 
             if (ShowCards)
                 _cardSpriteList.ForEach((sprite) => sprite.Draw(gameTime, spriteBatch));

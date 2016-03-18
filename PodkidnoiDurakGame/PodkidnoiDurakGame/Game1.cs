@@ -28,7 +28,7 @@ namespace PodkidnoiDurakGame
             // Init game window
             graphics = new GraphicsDeviceManager(this);
             graphics.IsFullScreen = false;
-            graphics.PreferredBackBufferWidth = 900;
+            graphics.PreferredBackBufferWidth = 960;
             graphics.PreferredBackBufferHeight = 599;
 
             Window.AllowAltF4 = true;
@@ -51,7 +51,7 @@ namespace PodkidnoiDurakGame
             // There we connect game desktop and UI
             gameGateway.GameDesktop.OnDeckCreated += () =>
             {
-                spriteManager.RenewWindowPackage(gameGateway.GameDesktop.GetGameData());
+                spriteManager.ResetCardsOnWindow(gameGateway.GameDesktop.GetGameData().Deck);
             };
             gameGateway.GameDesktop.OnCardsHandOut += () =>
             {
@@ -72,11 +72,10 @@ namespace PodkidnoiDurakGame
         {
             spriteManager = new SpriteManager(this);
             Components.Add(spriteManager);
-            
-            // For test purposes
-            StartGame();
 
             base.Initialize();
+
+            StartGame();
         }
 
 

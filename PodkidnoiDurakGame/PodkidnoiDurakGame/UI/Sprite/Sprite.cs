@@ -11,10 +11,10 @@ namespace PodkidnoiDurakGame
     abstract class Sprite
     {
 
-        Texture2D textureImage;
-        float rotation;
-        Vector2 rotationOrigin;
-        Point currentFrame;             // Represents index of current card 
+        protected Texture2D textureImage;
+        protected float rotation;
+        protected Vector2 rotationOrigin;
+        protected Point currentFrame;             // Represents index of current card 
         protected int frameOffset = 5;  // Represents offset between frames
         protected Point frameSize;      // Represents height and width of the frame
         protected Vector2 position;     // Represents current position of the frame on window
@@ -39,6 +39,13 @@ namespace PodkidnoiDurakGame
                     (int)Math.Round(position.X), (int)Math.Round(position.Y),
                     (int)Math.Round(frameSize.X * scale), (int)Math.Round(frameSize.Y * scale)
                     );
+            }
+        }
+        public Vector2 Position
+        {
+            get
+            {
+                return position;
             }
         }
 
@@ -66,10 +73,7 @@ namespace PodkidnoiDurakGame
             this.scale = scale;
         }
 
-        public virtual void Update(GameTime gameTime)
-        {
-
-        }
+        public virtual void Update(GameTime gameTime) { }
 
         public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
