@@ -16,14 +16,25 @@ namespace PodkidnoiDurakGame
         {
             get
             {
-                return destination != null;
+                return _isAnimated;
+            }
+        }
+
+        private long UnixTimeNow
+        {
+            get{
+                var timeSpan = (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0));
+                return (long)timeSpan.TotalMilliseconds;
             }
         }
 
         public CardUI Card { get; set; }
 
-        private Vector2? destination;
-        private Vector2 posIncrement;
+        private bool _isAnimated;
+        private Vector2 _destination;
+        private Vector2 _startPosition;
+        private long _startTime;
+        private long _animTime;
 
         public event Action<CardUI> OnAnimationStart;
         public event Action<CardUI> OnAnimationEnd;
@@ -61,12 +72,39 @@ namespace PodkidnoiDurakGame
             this.currentFrame = currentFrame;
         }
 
-        public void Animate(Vector2 destination, float speed)
+        public void Animate(Vector2 destination, int speed)
         {
-            this.destination = destination;
-            this.posIncrement = (destination - position)/speed;
+            _isAnimated = true;
+            _startPosition = position;
+            _destination = destination;
+            _animTime = speed;
+            _startTime = UnixTimeNow;
 
             if (OnAnimationStart != null) OnAnimationStart(Card);
+        }
+        private void ProcessAnimation()
+        {
+            if (_isAnimated)
+            {
+                var t = UnixTimeNow - _startTime;
+                var c = _destination - _startPosition;
+                Vector2 newPos = EaseLinear(t, _startPosition, c, _animTime);
+
+                if (t >= _animTime)
+                {
+                    _isAnimated = false;
+                    position = _destination;
+                    if (OnAnimationEnd != null) OnAnimationEnd(Card);
+                }
+                else
+                {
+                    position = newPos;
+                }
+            }
+        }
+        private Vector2 EaseLinear(long t, Vector2 b, Vector2 c, long d)
+        {
+            return c * t / d + b;
         }
         public override void Update(GameTime gameTime)
         {
@@ -80,19 +118,7 @@ namespace PodkidnoiDurakGame
                 OnClick != null)
                 OnClick(Card);
 
-            if (destination != null)
-            {
-                if (destination == position)
-                {
-                    destination = null;
-
-                    if (OnAnimationEnd != null) OnAnimationEnd(Card);
-                }
-                else
-                {
-                    destination += posIncrement;
-                }
-            }
+            ProcessAnimation();
 
             base.Update(gameTime);
         }

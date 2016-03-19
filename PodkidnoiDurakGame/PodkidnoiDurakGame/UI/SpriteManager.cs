@@ -313,9 +313,7 @@ namespace PodkidnoiDurakGame.GameDesk
             if (SpritesAreAnimated) return;
 
             if (_cardSpriteList.Count == 0) return;
-
-            Vector2 p = new Vector2(0, 0);
-
+        
             for (var i = 0; i < _cardSpriteList.Count; i++)
             {
                 for (var j = 0; j < _cardUIList.Count; j++)
@@ -332,19 +330,17 @@ namespace PodkidnoiDurakGame.GameDesk
 
                         if (texture == _backSprite)
                         {
-                            _cardSpriteList[i].Reset(position, texture, Point.Zero, rotation, zIndex, CardResizeIndex);
-                            //_cardSpriteList[i].Reset(texture, Point.Zero, rotation, zIndex, CardResizeIndex);
+                            _cardSpriteList[i].Reset(texture, Point.Zero, rotation, zIndex, CardResizeIndex);
                         }
                         else
                         {
-                            _cardSpriteList[i].Reset(position, texture, new Point((int)_cardUIList[j].CardSuit, (int)_cardUIList[j].CardType), rotation, zIndex, CardResizeIndex);
-                            //_cardSpriteList[i].Reset(texture, new Point((int)_cardUIList[j].CardSuit, (int)_cardUIList[j].CardType), rotation, zIndex, CardResizeIndex);
+                            _cardSpriteList[i].Reset(texture, new Point((int)_cardUIList[j].CardSuit, (int)_cardUIList[j].CardType), rotation, zIndex, CardResizeIndex);
                         }
 
-                        //if (position != _cardSpriteList[i].Position)
-                        //{
-                        //    _cardSpriteList[i].Animate(position, 10);
-                        //}
+                        if (position != _cardSpriteList[i].Position)
+                        {
+                            _cardSpriteList[i].Animate(position, 500);
+                        }
                     }
                 }
             }
