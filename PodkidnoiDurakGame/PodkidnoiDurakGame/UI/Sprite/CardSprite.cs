@@ -36,10 +36,13 @@ namespace PodkidnoiDurakGame
         private long _startTime;
         private long _animTime;
 
+        private bool _previouslyHovered = false;
+        private bool _previouslyClicked = false;
         public event Action<CardUI> OnAnimationStart;
         public event Action<CardUI> OnAnimationEnd;
         public event Action<CardUI> OnClick;
         public event Action<CardUI> OnHover;
+        public event Action<CardUI> OnUnHover;
 
 
         public CardSprite(Texture2D textureImage, Vector2 position, Point frameSize, Point currentFrame, float zIndex)
@@ -109,14 +112,32 @@ namespace PodkidnoiDurakGame
         public override void Update(GameTime gameTime)
         {
             MouseState mouseState = Mouse.GetState();
-            if (controlArea.Contains(mouseState.Position) &&
-                OnHover != null)
-                OnHover(Card);
+            if (controlArea.Contains(mouseState.Position))
+            {
+                _previouslyHovered = true;
+                if (OnHover != null) OnHover(Card);
 
-            if (controlArea.Contains(mouseState.Position) && 
-                mouseState.LeftButton == ButtonState.Pressed &&
-                OnClick != null)
-                OnClick(Card);
+                if (mouseState.LeftButton == ButtonState.Pressed &&
+                    !_previouslyClicked)
+                {
+                    _previouslyClicked = true;
+                    if (OnClick != null) OnClick(Card);
+                }
+                if (mouseState.LeftButton == ButtonState.Released &&
+                    _previouslyClicked)
+                {
+                    _previouslyClicked = false;
+                }
+            }
+            else
+            {
+                _previouslyClicked = false;
+                if (_previouslyHovered)
+                {
+                    _previouslyHovered = false;
+                    if (OnUnHover != null) OnUnHover(Card);
+                }
+            }
 
             ProcessAnimation();
 

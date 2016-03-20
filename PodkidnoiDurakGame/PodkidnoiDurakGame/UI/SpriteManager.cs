@@ -42,7 +42,7 @@ namespace PodkidnoiDurakGame.GameDesk
 
         // Triggers
         public bool ShowCards { get; set; }
-        private bool SpritesAreAnimated
+        public  bool SpritesAreAnimated
         {
             get
             {
@@ -187,7 +187,7 @@ namespace PodkidnoiDurakGame.GameDesk
             y += ((ui.Index+1) % 2 == 0) ? DescVerticalCardOffset : 0;
 
             var x = ((ui.Index + 1) % 2 == 0) ? HorizontalWindowPadding + DescHorizintalCardOffset : HorizontalWindowPadding;
-            x += (((ui.Index) / 2)) * CurrentGameCardWidth + DescCardOffset;
+            x += ((ui.Index) / 2) * (CurrentGameCardWidth + DescCardOffset);
 
             position = new Vector2(x, y);
             texture = _spriteList;
@@ -384,7 +384,9 @@ namespace PodkidnoiDurakGame.GameDesk
             _buttonSprite.OnClick += () =>
             {
                 if (OnGameButtonClicked != null)
+                {
                     OnGameButtonClicked(_buttonSprite.ButtonType);
+                }
             };
 
             ShowCards = false;
@@ -392,13 +394,10 @@ namespace PodkidnoiDurakGame.GameDesk
         public void RenewWindowPackage(GamePackage package)
         {
             _cardUIList = ConvertPackageToUI(package, ref _countPlayerCards, ref _countEnemyCards);
-
-            //if (SpritesAreAnimated) return;
-
+            
             if (_cardSpriteList.Count == 0) return;
 
-            // We shall unbind event handlers
-            //_cardSpriteList.ForEach((sprite) => sprite.);
+            _cardSpriteList.ForEach((sprite) => sprite.OnClick -= CardClickHandler);
         
             for (var i = 0; i < _cardSpriteList.Count; i++)
             {
@@ -418,13 +417,7 @@ namespace PodkidnoiDurakGame.GameDesk
                         // Set event handlers
                         if (_cardUIList[j].CardPosition == CardPosition.Player)
                         {
-                            _cardSpriteList[i].OnClick += (cardui) =>
-                            {
-                                if (OnPlayerCardThrow != null)
-                                {
-                                    OnPlayerCardThrow(new Card { CardSuit = cardui.CardSuit, CardType = cardui.CardType });
-                                }
-                            };
+                            _cardSpriteList[i].OnClick += CardClickHandler;
                         }
 
                     }
@@ -482,6 +475,13 @@ namespace PodkidnoiDurakGame.GameDesk
 
             _buttonSprite = btn;
         }
+        private void CardClickHandler(CardUI card)
+        {
+            if (OnPlayerCardThrow != null)
+            {
+                OnPlayerCardThrow(new Card { CardSuit = card.CardSuit, CardType = card.CardType });
+            }
+        }
 
         
 
@@ -500,16 +500,17 @@ namespace PodkidnoiDurakGame.GameDesk
 
         public override void Update(GameTime gameTime)
         {
-            _cardSpriteList.ForEach((sprite) => sprite.Update(gameTime));
-            _buttonSprite.Update(gameTime);
-
+            if (ShowCards)
+            {
+                _cardSpriteList.ForEach((sprite) => sprite.Update(gameTime));
+                _buttonSprite.Update(gameTime);
+            }
             base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime)
         {
             spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
-
             if (ShowCards)
             {
                 _cardSpriteList.ForEach((sprite) => sprite.Draw(gameTime, spriteBatch));

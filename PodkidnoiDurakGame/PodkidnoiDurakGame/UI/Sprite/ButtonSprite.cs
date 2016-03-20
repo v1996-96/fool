@@ -15,6 +15,7 @@ namespace PodkidnoiDurakGame
         public ButtonType ButtonType { get; set; }
 
         private bool _previouslyHovered = false;
+        private bool _previouslyClicked = false;
         public event Action OnUnHover;
         public event Action OnHover;
         public event Action OnClick;
@@ -42,20 +43,28 @@ namespace PodkidnoiDurakGame
             {
                 _previouslyHovered = true;
                 if (OnHover != null) OnHover();
+
+                if (mouseState.LeftButton == ButtonState.Pressed &&
+                    !_previouslyClicked)
+                {
+                    _previouslyClicked = true;
+                    if (OnClick != null) OnClick();
+                }
+                if (mouseState.LeftButton == ButtonState.Released &&
+                    _previouslyClicked)
+                {
+                    _previouslyClicked = false;
+                }
             }
             else
             {
+                _previouslyClicked = false;
                 if (_previouslyHovered)
                 {
                     _previouslyHovered = false;
                     if (OnUnHover != null) OnUnHover();   
                 }
             }
-
-            if (controlArea.Contains(mouseState.Position) &&
-                mouseState.LeftButton == ButtonState.Pressed &&
-                OnClick != null)
-                OnClick();
 
             base.Update(gameTime);
         }

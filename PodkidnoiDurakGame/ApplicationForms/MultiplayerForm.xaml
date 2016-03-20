@@ -28,6 +28,6 @@
             <TextBlock>Microsoft Lumia 950</TextBlock>
         </ListView>
 
-        <Button Grid.Row="2" Height="28" Margin="10 0">Играть</Button>
+        <Button Grid.Row="2" Height="28" Margin="10 0">Предолжить</Button>
     </Grid>
 </Window>

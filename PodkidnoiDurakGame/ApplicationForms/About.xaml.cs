@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -15,11 +14,11 @@ using System.Windows.Shapes;
 namespace ApplicationForms
 {
     /// <summary>
-    /// Логика взаимодействия для RegistrationForm.xaml
+    /// Логика взаимодействия для About.xaml
     /// </summary>
-    public partial class RegistrationForm : Window
+    public partial class About : Window
     {
-        public RegistrationForm()
+        public About()
         {
             InitializeComponent();
         }
