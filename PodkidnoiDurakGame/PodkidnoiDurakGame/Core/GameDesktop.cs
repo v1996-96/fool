@@ -9,27 +9,10 @@ namespace PodkidnoiDurakGame.Core
 {
     class GameDesktop
     {
-        #region Singleton pattern
-        private static GameDesktop _instance;
-        public static GameDesktop Instance
-        {
-            get
-            {
-                if (_instance == null)
-                    _instance = new GameDesktop();
-
-                return _instance;
-            }
-        }
-        private GameDesktop() {}
-        #endregion
-
-
 
         #region Desktop Settings
         // Fields
-        public bool IsBlocked { get; private set; }
-        public PlayerType WhoseParty { get; private set; }
+        public bool IsBlocked { get; set; }
         public GameState GameState { get; private set; }
 
         // Variables
@@ -44,7 +27,29 @@ namespace PodkidnoiDurakGame.Core
 
 
         #region Card lists and settings
-        // Card lists
+        public PlayerType WhoseTurn
+        {
+            get { return _whoseTurn; }
+            private set
+            {
+                _whoseTurn = value;
+                if (OnWhoseTurnChanged != null) OnWhoseTurnChanged(value);
+            }
+        }
+        private PlayerType _whoseTurn;
+        public PlayerType WhoseParty
+        {
+            get
+            {
+                return _whoseParty;
+            }
+            private set
+            {
+                _whoseParty = value;
+                if (OnWhosePartyChanged != null) OnWhosePartyChanged(value);
+            }
+        }
+        private PlayerType _whoseParty;
         public CardSuit Trump { get; private set; }
         public List<Card> Deck { get; private set; }
         public List<CardPair> DescPairs { get; private set; }
@@ -59,12 +64,12 @@ namespace PodkidnoiDurakGame.Core
         public event Action<PlayerType, Card> OnThrowCard;
         public event Action<PlayerType> OnPass;
         public event Action<PlayerType> OnGetAll;
+        public event Action<PlayerType> OnWhosePartyChanged;
+        public event Action<PlayerType> OnWhoseTurnChanged;
 
         // Game events
         public event Action OnGameStarted;
         public event Action OnGameStopped;
-        public event Action OnGameBlocked;
-        public event Action OnGameUnBlocked;
         public event Action OnDeckCreated;
         public event Action OnCardsHandOut;
         public event Action<GameResult> OnGameFinished;
@@ -101,22 +106,10 @@ namespace PodkidnoiDurakGame.Core
 
             if (OnGameStopped != null) OnGameStopped();
         }
-        public void TriggerBlockGame()
-        {
-            if (IsBlocked)
-            {
-                this.IsBlocked = false;
-                if (OnGameUnBlocked != null) OnGameUnBlocked();
-            }
-            else
-            {
-                this.IsBlocked = true;
-                if (OnGameBlocked != null) OnGameBlocked();
-            }
-        }
         public GamePackage GetGameData()
         {
             return new GamePackage { 
+                WhoseParty = this.WhoseParty,
                 Deck = this.Deck,
                 DescPairs = this.DescPairs,
                 Trump = this.Trump,
@@ -136,6 +129,7 @@ namespace PodkidnoiDurakGame.Core
             Deck = gamePackage.Deck;
             EnemyCards = gamePackage.EnemyCards;
             DescPairs = gamePackage.DescPairs;
+            WhoseParty = gamePackage.WhoseParty;
         }
         private void CheckGameState()
         {
@@ -241,6 +235,8 @@ namespace PodkidnoiDurakGame.Core
                 if ((int)playerMinTrump.Value.CardType == (int)enemyMinTrump.Value.CardType)
                     WhoseParty = PlayerType.Player;
             }
+
+            WhoseTurn = WhoseParty;
         }
         private Card? GetMinTrump(List<Card> cardList)
         {
@@ -304,10 +300,22 @@ namespace PodkidnoiDurakGame.Core
                 {
                     Card card = new Card();
                     if (Enum.IsDefined(typeof(CardType), i))
+                    {
                         card.CardType = (CardType)i;
+                    }
+                    else
+                    {
+                        if (OnGameError != null) OnGameError(GameError.FatalError, "Card index not found"); return;
+                    }
 
                     if (Enum.IsDefined(typeof(CardSuit), j))
+                    {
                         card.CardSuit = (CardSuit)j;
+                    }
+                    else
+                    {
+                        if (OnGameError != null) OnGameError(GameError.FatalError, "Card index not found"); return;
+                    }
 
                     Deck.Add(card);
                 }
@@ -356,19 +364,25 @@ namespace PodkidnoiDurakGame.Core
         }
         private void HandOutCardsToPlayer()
         {
-            while (Deck.Count > 0 && PlayerCards.Count < DefaultPlayerCardsCount)
+            do
             {
-                PlayerCards.Add( Deck[ Deck.Count-1 ] );
-                Deck.RemoveAt( Deck.Count-1 );
-            }
+                if (Deck.Count == 0) return;
+                if (PlayerCards.Count >= DefaultPlayerCardsCount) break;
+
+                PlayerCards.Add(Deck[Deck.Count - 1]);
+                Deck.RemoveAt(Deck.Count - 1);
+            } while (Deck.Count > 0);
         }
         private void HandOutCardsToEnemy()
         {
-            while (Deck.Count > 0 && EnemyCards.Count < DefaultPlayerCardsCount)
+            do
             {
+                if (Deck.Count == 0) return;
+                if (EnemyCards.Count >= DefaultPlayerCardsCount) break;
+
                 EnemyCards.Add(Deck[Deck.Count - 1]);
                 Deck.RemoveAt(Deck.Count - 1);
-            }
+            } while (Deck.Count > 0);
         }
         #endregion
 
@@ -381,8 +395,8 @@ namespace PodkidnoiDurakGame.Core
             {
                 for (int j = i+1; j < cardList.Count; j++)
                 {
-                    var firstPriority = ((cardList[i].CardSuit == Trump) ? 10 : (int)cardList[i].CardSuit + 1) * ((int)cardList[i].CardType +1);
-                    var secondPriority = ((cardList[j].CardSuit == Trump) ? 10 : (int)cardList[j].CardSuit + 1) * ((int)cardList[j].CardType +1);
+                    var firstPriority = GetCardPriority(cardList[i]) * ((int)cardList[i].CardType + 1);
+                    var secondPriority = GetCardPriority(cardList[j]) * ((int)cardList[j].CardType + 1);
                     if (firstPriority > secondPriority)
                     {
                         var card = cardList[i];
@@ -393,6 +407,19 @@ namespace PodkidnoiDurakGame.Core
             }
 
             return cardList;
+        }
+        private int GetCardPriority(Card card)
+        {
+            if (card.CardSuit == Trump) return 100000;
+
+            switch (card.CardSuit)
+            {
+                case CardSuit.Heart: return 10;
+                case CardSuit.Diamond: return 100;
+                case CardSuit.Club: return 1000;
+                case CardSuit.Spade: return 10000;
+                default: return 1;
+            }
         }
         #endregion
 
@@ -447,8 +474,11 @@ namespace PodkidnoiDurakGame.Core
                     {
                         PlayerCards.Remove(card);
                         DescPairs.Add(new CardPair { LowerCard = card });
+
                         if (OnThrowCard != null) OnThrowCard(player, card);
+                        WhoseTurn = PlayerType.Enemy;
                         CheckGameState();
+                        return;
                     }
                 }
                 if (player == PlayerType.Enemy && WhoseParty == PlayerType.Enemy)
@@ -468,8 +498,11 @@ namespace PodkidnoiDurakGame.Core
                     {
                         EnemyCards.Remove(card);
                         DescPairs.Add(new CardPair { LowerCard = card });
+
                         if (OnThrowCard != null) OnThrowCard(player, card);
+                        WhoseTurn = PlayerType.Player;
                         CheckGameState();
+                        return;
                     }
                 }
 
@@ -481,7 +514,7 @@ namespace PodkidnoiDurakGame.Core
                         return;
                     }
 
-                    if (!ThrowWhenOwnParty(card))
+                    if (!ThrowWhenNotOwnParty(card))
                     {
                         if (OnActionRefused != null) OnActionRefused(GameAction.Throw, GameError.ActionRefused, "You can't throw that card");
                         return;
@@ -490,8 +523,11 @@ namespace PodkidnoiDurakGame.Core
                     {
                         PlayerCards.Remove(card);
                         DescPairs[DescPairs.Count - 1].UpperCard = card;
+
                         if (OnThrowCard != null) OnThrowCard(player, card);
+                        WhoseTurn = PlayerType.Enemy;
                         CheckGameState();
+                        return;
                     }
                 }
                 if (player == PlayerType.Enemy && WhoseParty == PlayerType.Player)
@@ -502,7 +538,7 @@ namespace PodkidnoiDurakGame.Core
                         return;
                     }
 
-                    if (!ThrowWhenOwnParty(card))
+                    if (!ThrowWhenNotOwnParty(card))
                     {
                         if (OnActionRefused != null) OnActionRefused(GameAction.Throw, GameError.ActionRefused, "You can't throw that card");
                         return;
@@ -511,8 +547,11 @@ namespace PodkidnoiDurakGame.Core
                     {
                         EnemyCards.Remove(card);
                         DescPairs[DescPairs.Count - 1].UpperCard = card;
+
                         if (OnThrowCard != null) OnThrowCard(player, card);
+                        WhoseTurn = PlayerType.Player;
                         CheckGameState();
+                        return;
                     }
                 }
             }
@@ -566,7 +605,8 @@ namespace PodkidnoiDurakGame.Core
                     cardThrown.CardSuit == Trump) ||
                     (DescPairs[lastIndex].LowerCard.CardSuit != Trump &&
                     cardThrown.CardSuit != Trump))
-                    return (int)DescPairs[lastIndex].LowerCard.CardSuit < (int)cardThrown.CardSuit;
+                    return (cardThrown.CardSuit == DescPairs[lastIndex].LowerCard.CardSuit) &&
+                       ((int)DescPairs[lastIndex].LowerCard.CardType < (int)cardThrown.CardType);
 
                 return false;
             }
@@ -594,34 +634,46 @@ namespace PodkidnoiDurakGame.Core
                     default: return;
                 }
 
+                if (DescPairs.Count == 0)
+                {
+                    if (OnActionRefused != null) OnActionRefused(GameAction.Pass, GameError.Warning, "You cant't say pass");
+                    return;
+                }
+
                 if (WhoseParty == PlayerType.Player)
                 {
                     if (player != PlayerType.Player)
                     {
-                        if (OnActionRefused != null) OnActionRefused(GameAction.Throw, GameError.Warning, "You cant't say pass");
+                        if (OnActionRefused != null) OnActionRefused(GameAction.Pass, GameError.Warning, "You cant't say pass");
                         return;
                     }
 
                     DescPairs.Clear();
-                    HandOutCards();
+                    WhoseParty = PlayerType.Enemy;
 
                     if (OnPass != null) OnPass(player);
+                    HandOutCards();
+                    WhoseTurn = PlayerType.Enemy;
                     CheckGameState();
+                    return;
                 }
 
                 if (WhoseParty == PlayerType.Enemy)
                 {
                     if (player != PlayerType.Enemy)
                     {
-                        if (OnActionRefused != null) OnActionRefused(GameAction.Throw, GameError.Warning, "You cant't say pass");
+                        if (OnActionRefused != null) OnActionRefused(GameAction.Pass, GameError.Warning, "You cant't say pass");
                         return;
                     }
 
                     DescPairs.Clear();
-                    HandOutCards();
+                    WhoseParty = PlayerType.Player;
 
                     if (OnPass != null) OnPass(player);
+                    HandOutCards();
+                    WhoseTurn = PlayerType.Player;
                     CheckGameState();
+                    return;
                 }
             }
             #endregion
@@ -648,11 +700,17 @@ namespace PodkidnoiDurakGame.Core
                     default: return;
                 }
 
+                if (DescPairs.Count == 0)
+                {
+                    if (OnActionRefused != null) OnActionRefused(GameAction.Pass, GameError.Warning, "You cant't say get all");
+                    return;
+                }
+
                 if (WhoseParty == PlayerType.Player)
                 {
                     if (player != PlayerType.Enemy)
                     {
-                        if (OnActionRefused != null) OnActionRefused(GameAction.Throw, GameError.Warning, "You cant't say get all");
+                        if (OnActionRefused != null) OnActionRefused(GameAction.GetAll, GameError.Warning, "You cant't say get all");
                         return;
                     }
 
@@ -666,14 +724,17 @@ namespace PodkidnoiDurakGame.Core
                     DescPairs.Clear();
 
                     if (OnGetAll != null) OnGetAll(player);
+                    HandOutCards();
+                    WhoseTurn = PlayerType.Player;
                     CheckGameState();
+                    return;
                 }
 
                 if (WhoseParty == PlayerType.Enemy)
                 {
                     if (player != PlayerType.Player)
                     {
-                        if (OnActionRefused != null) OnActionRefused(GameAction.Throw, GameError.Warning, "You cant't say get all");
+                        if (OnActionRefused != null) OnActionRefused(GameAction.GetAll, GameError.Warning, "You cant't say get all");
                         return;
                     }
 
@@ -685,9 +746,12 @@ namespace PodkidnoiDurakGame.Core
                     }
 
                     DescPairs.Clear();
-
+                    
                     if (OnGetAll != null) OnGetAll(player);
+                    HandOutCards();
+                    WhoseTurn = PlayerType.Enemy;
                     CheckGameState();
+                    return;
                 }
             }
             #endregion

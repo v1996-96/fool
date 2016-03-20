@@ -10,6 +10,11 @@ namespace PodkidnoiDurakGame.Core.PlayerDefinitions
     {
         public GamePackage GamePackage { get; set; }
 
+        public void TakeTheBaton()
+        {
+            // There we shall make decision what card to throw. Is unnecessary for user
+        }
+
         public void Throw(Card card)
         {
             if (OnThrow != null) OnThrow(card);

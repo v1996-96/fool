@@ -24,5 +24,49 @@ namespace ApplicationForms
         {
             InitializeComponent();
         }
+
+        public event Action<string> OnStartWithAI;
+        public event Action<string> OnStartWithNetUser;
+        public event Action OnAboutShow;
+        public event Action OnExit;
+
+        private void StartWithAI_Click(object sender, RoutedEventArgs e)
+        {
+            string nickname = Nickname.Text;
+            if (nickname == "")
+            {
+                MessageBox.Show("Nickname can't be empty");
+                return;
+            }
+
+            if (OnStartWithAI != null) OnStartWithAI(nickname);
+            this.Close();
+        }
+
+        private void StartWithNetUser_Click(object sender, RoutedEventArgs e)
+        {
+            string nickname = Nickname.Text;
+            if (nickname == "")
+            {
+                MessageBox.Show("Nickname can't be empty");
+                return;
+            }
+
+            if (OnStartWithNetUser != null) OnStartWithNetUser(nickname);
+            // Uncomment when this feature will be installed
+            //this.Close();
+        }
+
+        private void OpenAboutWindow_Click(object sender, RoutedEventArgs e)
+        {
+            if (OnAboutShow != null) OnAboutShow();
+        }
+
+        private void ExitGame_Click(object sender, RoutedEventArgs e)
+        {
+            if (OnExit != null) OnExit();
+            this.Close();
+        }
+        
     }
 }
