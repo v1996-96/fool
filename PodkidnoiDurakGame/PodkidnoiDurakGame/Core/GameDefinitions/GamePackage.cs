@@ -8,6 +8,7 @@ namespace PodkidnoiDurakGame.Core.GameDefinitions
 {
     class GamePackage
     {
+        public PlayerType WhoseParty { get; set; }
         public CardSuit Trump { get; set; }
         public List<Card> Deck { get; set; }
         public List<CardPair> DescPairs { get; set; }

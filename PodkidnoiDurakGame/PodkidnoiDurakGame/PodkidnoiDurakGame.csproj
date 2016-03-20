@@ -45,6 +45,7 @@
     <Compile Include="Core\GameDefinitions\GameAction.cs" />
     <Compile Include="Core\GameDefinitions\GamePackage.cs" />
     <Compile Include="Core\GameDefinitions\GameResult.cs" />
+    <Compile Include="Core\GameDefinitions\UserType.cs" />
     <Compile Include="Core\GameDesktop.cs" />
     <Compile Include="Core\GameDefinitions\GameError.cs" />
     <Compile Include="Core\GameDefinitions\GameState.cs" />
@@ -75,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\backSprite.png" />
+    <Content Include="Content\buttons.png" />
     <Content Include="Content\sprite1.png" />
     <Content Include="Icon.ico" />
   </ItemGroup>

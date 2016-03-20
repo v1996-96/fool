@@ -5,6 +5,7 @@ using PodkidnoiDurakGame.Core;
 using PodkidnoiDurakGame.Core.ArtificialIntelligence;
 using PodkidnoiDurakGame.Core.PlayerDefinitions;
 using PodkidnoiDurakGame.GameDesk;
+using System.Windows;
 
 namespace PodkidnoiDurakGame
 {
@@ -56,14 +57,55 @@ namespace PodkidnoiDurakGame
             gameGateway.GameDesktop.OnCardsHandOut += () =>
             {
                 spriteManager.RenewWindowPackage(gameGateway.GameDesktop.GetGameData());
+                gameGateway.GetGamePackages(ref _player);
+                gameGateway.GetGamePackages(ref _enemy);
             };
+
+
+            gameGateway.GameDesktop.OnThrowCard += (playerType, card) =>
+            {
+                spriteManager.RenewWindowPackage(gameGateway.GameDesktop.GetGameData());
+                gameGateway.GetGamePackages(ref _player);
+                gameGateway.GetGamePackages(ref _enemy);
+            };
+            gameGateway.GameDesktop.OnPass += (playerType) =>
+            {
+                spriteManager.RenewWindowPackage(gameGateway.GameDesktop.GetGameData());
+                gameGateway.GetGamePackages(ref _player);
+                gameGateway.GetGamePackages(ref _enemy);
+            };
+            gameGateway.GameDesktop.OnGetAll += (playerType) =>
+            {
+                spriteManager.RenewWindowPackage(gameGateway.GameDesktop.GetGameData());
+                gameGateway.GetGamePackages(ref _player);
+                gameGateway.GetGamePackages(ref _enemy);
+            };
+            gameGateway.GameDesktop.OnWhoseTurnChanged += (playerType) =>
+            {
+                if (playerType == PlayerType.Player)
+                    _player.TakeTheBaton();
+
+                if (playerType == PlayerType.Enemy)
+                    _enemy.TakeTheBaton();
+            };
+
+
+            gameGateway.GameDesktop.OnActionRefused += (gameAction, gameError, message) =>
+            {
+                //MessageBox.Show(message);
+            };
+            gameGateway.GameDesktop.OnGameError += (gameError, message) =>
+            {
+                MessageBox.Show(message);
+            };
+
+
+            // Connect UI and player instance
+            spriteManager.OnPlayerCardThrow += _player.Throw;
+
 
             // There we start game in game desktop
             gameGateway.GameDesktop.StartGame();
-
-            // There we transmit game packages to players
-            gameGateway.GetGamePackages(ref _player);
-            gameGateway.GetGamePackages(ref _enemy);
         }
 
 
