@@ -58,8 +58,8 @@ namespace PodkidnoiDurakGame.GameDesk
         ButtonSprite _buttonSprite;
 
         // For connecting UI and Player instance
-        public event Action<Card> OnPlayerCardThrow;
-        public event Action<ButtonType> OnGameButtonClicked;
+        public Action<Card> OnPlayerCardThrow;
+        public Action<ButtonType> OnGameButtonClicked;
 
 
         #region Position calculator
@@ -234,10 +234,10 @@ namespace PodkidnoiDurakGame.GameDesk
 
 
         #region Converter
-        public List<CardUI> ConvertPackageToUI(GamePackage package, ref int countPlayerCards, ref int countEnemyCards)
+        public List<CardUI> ConvertPackageToUI(GamePackage package)
         {
-            countPlayerCards = package.PlayerCards.Count;
-            countEnemyCards = package.EnemyCards.Count;
+            _countPlayerCards = package.PlayerCards.Count;
+            _countEnemyCards = package.EnemyCards.Count;
 
             List<CardUI> cardUIList = new List<CardUI> { };
             int index = 0;
@@ -393,7 +393,7 @@ namespace PodkidnoiDurakGame.GameDesk
         }
         public void RenewWindowPackage(GamePackage package)
         {
-            _cardUIList = ConvertPackageToUI(package, ref _countPlayerCards, ref _countEnemyCards);
+            _cardUIList = ConvertPackageToUI(package);
             
             if (_cardSpriteList.Count == 0) return;
 
@@ -468,7 +468,7 @@ namespace PodkidnoiDurakGame.GameDesk
                     btnPos,
                     new Point(ButtonFrameWidth, ButtonFrameHeight),
                     Point.Zero,
-                    1,
+                    0,
                     ButtonFrameOffset
                 );
             btn.ButtonType = type;

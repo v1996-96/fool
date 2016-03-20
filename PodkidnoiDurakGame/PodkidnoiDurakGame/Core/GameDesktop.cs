@@ -9,22 +9,6 @@ namespace PodkidnoiDurakGame.Core
 {
     class GameDesktop
     {
-        #region Singleton pattern
-        private static GameDesktop _instance;
-        public static GameDesktop Instance
-        {
-            get
-            {
-                if (_instance == null)
-                    _instance = new GameDesktop();
-
-                return _instance;
-            }
-        }
-        private GameDesktop() {}
-        #endregion
-
-
 
         #region Desktop Settings
         // Fields
@@ -86,8 +70,6 @@ namespace PodkidnoiDurakGame.Core
         // Game events
         public event Action OnGameStarted;
         public event Action OnGameStopped;
-        public event Action OnGameBlocked;
-        public event Action OnGameUnBlocked;
         public event Action OnDeckCreated;
         public event Action OnCardsHandOut;
         public event Action<GameResult> OnGameFinished;
@@ -652,11 +634,17 @@ namespace PodkidnoiDurakGame.Core
                     default: return;
                 }
 
+                if (DescPairs.Count == 0)
+                {
+                    if (OnActionRefused != null) OnActionRefused(GameAction.Pass, GameError.Warning, "You cant't say pass");
+                    return;
+                }
+
                 if (WhoseParty == PlayerType.Player)
                 {
                     if (player != PlayerType.Player)
                     {
-                        if (OnActionRefused != null) OnActionRefused(GameAction.Throw, GameError.Warning, "You cant't say pass");
+                        if (OnActionRefused != null) OnActionRefused(GameAction.Pass, GameError.Warning, "You cant't say pass");
                         return;
                     }
 
@@ -667,13 +655,14 @@ namespace PodkidnoiDurakGame.Core
                     HandOutCards();
                     WhoseTurn = PlayerType.Enemy;
                     CheckGameState();
+                    return;
                 }
 
                 if (WhoseParty == PlayerType.Enemy)
                 {
                     if (player != PlayerType.Enemy)
                     {
-                        if (OnActionRefused != null) OnActionRefused(GameAction.Throw, GameError.Warning, "You cant't say pass");
+                        if (OnActionRefused != null) OnActionRefused(GameAction.Pass, GameError.Warning, "You cant't say pass");
                         return;
                     }
 
@@ -684,6 +673,7 @@ namespace PodkidnoiDurakGame.Core
                     HandOutCards();
                     WhoseTurn = PlayerType.Player;
                     CheckGameState();
+                    return;
                 }
             }
             #endregion
@@ -710,11 +700,17 @@ namespace PodkidnoiDurakGame.Core
                     default: return;
                 }
 
+                if (DescPairs.Count == 0)
+                {
+                    if (OnActionRefused != null) OnActionRefused(GameAction.Pass, GameError.Warning, "You cant't say get all");
+                    return;
+                }
+
                 if (WhoseParty == PlayerType.Player)
                 {
                     if (player != PlayerType.Enemy)
                     {
-                        if (OnActionRefused != null) OnActionRefused(GameAction.Throw, GameError.Warning, "You cant't say get all");
+                        if (OnActionRefused != null) OnActionRefused(GameAction.GetAll, GameError.Warning, "You cant't say get all");
                         return;
                     }
 
@@ -731,13 +727,14 @@ namespace PodkidnoiDurakGame.Core
                     HandOutCards();
                     WhoseTurn = PlayerType.Player;
                     CheckGameState();
+                    return;
                 }
 
                 if (WhoseParty == PlayerType.Enemy)
                 {
                     if (player != PlayerType.Player)
                     {
-                        if (OnActionRefused != null) OnActionRefused(GameAction.Throw, GameError.Warning, "You cant't say get all");
+                        if (OnActionRefused != null) OnActionRefused(GameAction.GetAll, GameError.Warning, "You cant't say get all");
                         return;
                     }
 
@@ -754,6 +751,7 @@ namespace PodkidnoiDurakGame.Core
                     HandOutCards();
                     WhoseTurn = PlayerType.Enemy;
                     CheckGameState();
+                    return;
                 }
             }
             #endregion

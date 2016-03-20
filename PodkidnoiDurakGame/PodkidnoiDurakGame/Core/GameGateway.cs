@@ -30,16 +30,19 @@ namespace PodkidnoiDurakGame.Core
         private GameGateway() { }
         #endregion
 
-        private GameDesktop gameDesktop = GameDesktop.Instance;
+        private GameDesktop gameDesktop;
         public GameDesktop GameDesktop { get { return gameDesktop; } }
 
         private IPlayer _player;
         private IPlayer _enemy;
         public SpriteManager SpriteManager { get; set; }
 
+        public event Action<string> OnGameFinished;
 
         public void StartGame()
         {
+            gameDesktop = new GameDesktop();
+
             _player = new Player();
             _enemy = new AINormal();
 
@@ -77,17 +80,38 @@ namespace PodkidnoiDurakGame.Core
 
             GameDesktop.OnActionRefused += (gameAction, gameError, message) =>
             {
-                //MessageBox.Show(message);
+                MessageBox.Show(message);
             };
             GameDesktop.OnGameError += (gameError, message) =>
             {
-                //MessageBox.Show(message);
+                MessageBox.Show(message);
+            };
+            GameDesktop.OnGameFinished += (result) =>
+            {
+                string message = "";
+                switch (result)
+                {
+                    case GameResult.Win:
+                        message = "Вы выиграли!";
+                        break;
+                    case GameResult.Loose:
+                        message = "Вы проиграли :(";
+                        break;
+                    case GameResult.Draw:
+                        message = "Ничья.";
+                        break;
+                    default:
+                        message = "Что-то пошло не так..";
+                        break;
+                }
+
+                if (OnGameFinished != null) OnGameFinished(message);
             };
 
 
             // Connect UI and player instance
-            SpriteManager.OnPlayerCardThrow += _player.Throw;
-            SpriteManager.OnGameButtonClicked += (btnType) =>
+            SpriteManager.OnPlayerCardThrow = _player.Throw;
+            SpriteManager.OnGameButtonClicked = (btnType) =>
             {
                 switch (btnType)
                 {
@@ -108,7 +132,6 @@ namespace PodkidnoiDurakGame.Core
             // There we start game in game desktop
             GameDesktop.StartGame();
         }
-
 
 
 

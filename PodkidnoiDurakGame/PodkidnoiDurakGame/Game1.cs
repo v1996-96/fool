@@ -20,6 +20,8 @@ namespace PodkidnoiDurakGame
 
         GameGateway gameGateway = GameGateway.Instance;
 
+        bool _exitCommand = false;
+
         public Game1()
         {
             // Init game window
@@ -43,16 +45,47 @@ namespace PodkidnoiDurakGame
 
             base.Initialize();
 
+            gameGateway.OnGameFinished += GameFinishedHandler;
+
             LoginForm loginForm = new LoginForm();
+            loginForm.OnStartWithAI += (nickname) =>
+            {
+                gameGateway.SpriteManager = spriteManager;
+                gameGateway.StartGame();
+            };
+            loginForm.OnStartWithNetUser += (nickname) => { MessageBox.Show("Comming soon"); };
+            loginForm.OnAboutShow += () =>
+            {
+                About about = new About();
+                about.ShowDialog();
+            };
+            loginForm.OnExit += () => { _exitCommand = true; };
 
-            //loginForm.ShowDialog();
-
-            gameGateway.SpriteManager = spriteManager;
-            gameGateway.StartGame();
+            loginForm.ShowDialog();
         }
+        private void GameFinishedHandler(string status)
+        {
+            ResultWindow result = new ResultWindow(status);
+            result.OnStartWithAI += () =>
+            {
+                gameGateway.SpriteManager = spriteManager;
+                gameGateway.StartGame();
+            };
+            result.OnStartWithNetUser += () => { MessageBox.Show("Comming soon"); };
+            result.OnAboutShow += () =>
+            {
+                About about = new About();
+                about.ShowDialog();
+            };
+            result.OnExit += () => { _exitCommand = true; };
+            result.ShowDialog();
+        }
+
+
+
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape) || _exitCommand)
                 Exit();
 
             base.Update(gameTime);
