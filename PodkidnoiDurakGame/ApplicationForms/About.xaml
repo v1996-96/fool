@@ -36,9 +36,10 @@
             - Трушин Виктор<LineBreak />
             - Екатерина Подольская<LineBreak />
             - Полина Юстус<LineBreak />
-            
-            <Hyperlink NavigateUri="http://trushin-v.hol.es/projects/durak_old/">Подкидной дурак v1.0</Hyperlink><LineBreak />
-            <Hyperlink NavigateUri="http://trushin-v.hol.es/projects/durak/">Подкидной дурак v2.1</Hyperlink><LineBreak />
+            Подкидной дурак v1.0:<LineBreak />
+            <Hyperlink NavigateUri="http://trushin-v.hol.es/projects/durak_old/">http://trushin-v.hol.es/projects/durak_old/</Hyperlink><LineBreak />
+            Подкидной дурак v2.1:<LineBreak />
+            <Hyperlink NavigateUri="http://trushin-v.hol.es/projects/durak/">http://trushin-v.hol.es/projects/durak/</Hyperlink><LineBreak />
         </TextBlock>
         
     </Grid>
