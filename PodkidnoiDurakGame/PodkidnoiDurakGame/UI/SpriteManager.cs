@@ -11,18 +11,23 @@ using ApplicationForms;
 using PodkidnoiDurakGame.Core.PlayerDefinitions;
 using PodkidnoiDurakGame.Core.GameDefinitions;
 using PodkidnoiDurakGame.Core.CardDefinitions;
+using PodkidnoiDurakGame.UI.ElementDefenitions;
 
 namespace PodkidnoiDurakGame.GameDesk
 {
     class SpriteManager : DrawableGameComponent
     {
+        // Content
         SpriteBatch spriteBatch;
         Texture2D _spriteList;
         Texture2D _backSprite;
         Texture2D _button;
+
+        // Intermediate variables
         int _countPlayerCards = 0;
         int _countEnemyCards = 0;
 
+        // Cards settings
         const int SpriteFrameWidth = 170;
         const int SpriteFrameHeight = 252;
         const int FrameOffset = 5;
@@ -30,6 +35,12 @@ namespace PodkidnoiDurakGame.GameDesk
         const int MaxCardSuitIndex = 4;
         const int AnimationTime = 300;
 
+        // Buttons settings
+        const int ButtonFrameWidth = 140;
+        const int ButtonFrameHeight = 36;
+        const int ButtonFrameOffset = 5;
+
+        // Triggers
         public bool ShowCards { get; set; }
         private bool SpritesAreAnimated
         {
@@ -41,9 +52,14 @@ namespace PodkidnoiDurakGame.GameDesk
             }
         }
 
+        // Sprites
         List<CardUI> _cardUIList;
         List<CardSprite> _cardSpriteList = new List<CardSprite> { };
+        ButtonSprite _buttonSprite;
+
+        // For connecting UI and Player instance
         public event Action<Card> OnPlayerCardThrow;
+        public event Action<ButtonType> OnGameButtonClicked;
 
 
         #region Position calculator
@@ -67,6 +83,8 @@ namespace PodkidnoiDurakGame.GameDesk
         // trump card
         const float TrumpCardTopOffset = 25;
         const float TrumpCardToDeck = 40;
+        // button
+        const float TopOffset = 25;
         // z-index
         const float PlayerCardsMinZIndex = 0f;
         const float PlayerCardsMaxZIndex = 1f;
@@ -83,6 +101,13 @@ namespace PodkidnoiDurakGame.GameDesk
         private float CurrentGameCardHeight
         {
             get { return CardResizeIndex * SpriteFrameHeight; }
+        }
+
+        private void CalculateButtonSpriteState(out Vector2 position)
+        {
+            var x = WindowWidth - HorizontalWindowPadding - ButtonFrameWidth;
+            var y = VerticalWindowPadding + 2 * CurrentGameCardHeight + DescTopOffset + DescVerticalCardOffset + TopOffset;
+            position = new Vector2(x, y);
         }
 
         private void CalculateNewSpriteState(CardUI ui, out Vector2 position, out Texture2D texture, out float rotation, out float zIndex)
@@ -123,7 +148,7 @@ namespace PodkidnoiDurakGame.GameDesk
             }
             else
             {
-                var cardOffset = MaxCardOffset - (cardsSpace - blockWidth)/(_countEnemyCards-1);
+                var cardOffset = MaxCardOffset - (blockWidth - cardsSpace) / (_countEnemyCards - 1);
                 x = HorizontalWindowPadding + ui.Index * (CurrentGameCardWidth + cardOffset);
             }
 
@@ -146,7 +171,7 @@ namespace PodkidnoiDurakGame.GameDesk
             }
             else
             {
-                var cardOffset = MaxCardOffset - (cardsSpace - blockWidth) / (_countPlayerCards - 1);
+                var cardOffset = MaxCardOffset - (blockWidth - cardsSpace) / (_countPlayerCards - 1);
                 x = HorizontalWindowPadding + ui.Index * (CurrentGameCardWidth + cardOffset);
             }
 
@@ -197,7 +222,9 @@ namespace PodkidnoiDurakGame.GameDesk
 
         private void CalculateSpriteState_OutOfDesc(CardUI ui, out Vector2 position, out Texture2D texture, out float rotation, out float zIndex)
         {
-            position = new Vector2(-1 * CurrentGameCardWidth - 10, 0);
+            var x = -1 * CurrentGameCardWidth - 10;
+            var y = VerticalWindowPadding + CurrentGameCardHeight + DescTopOffset;
+            position = new Vector2(x, y);
             texture = _backSprite;
             rotation = 0;
             zIndex = 0;
@@ -269,6 +296,33 @@ namespace PodkidnoiDurakGame.GameDesk
                     Index = index++
                 });
             });
+
+
+            // Get list of cards out of desc
+            foreach (var sprite in _cardSpriteList)
+            {
+                var contains = false;
+                foreach (var fui in cardUIList)
+                {
+                    if (fui.CardType == sprite.Card.CardType &&
+                        fui.CardSuit == sprite.Card.CardSuit)
+                    {
+                        contains = true; break;
+                    }
+                }
+
+                if (!contains)
+                {
+                    cardUIList.Add(new CardUI
+                    {
+                        CardPosition = CardPosition.OutOfDesc,
+                        CardSuit = sprite.Card.CardSuit,
+                        CardType = sprite.Card.CardType,
+                        Index = 0
+                    });
+                }
+            }
+
             return cardUIList;
         }
 #endregion
@@ -306,6 +360,32 @@ namespace PodkidnoiDurakGame.GameDesk
                 };
                 _cardSpriteList.Add(c);
             });
+
+            CreateButtons(ButtonType.Pass);
+
+            _buttonSprite.OnHover += () =>
+            {
+                if (_buttonSprite.ButtonType == ButtonType.Pass)
+                    ResetButtons(ButtonType.PassHovered);
+
+                if (_buttonSprite.ButtonType == ButtonType.GetAll)
+                    ResetButtons(ButtonType.GetAllHovered);
+            };
+
+            _buttonSprite.OnUnHover += () =>
+            {
+                if (_buttonSprite.ButtonType == ButtonType.PassHovered)
+                    ResetButtons(ButtonType.Pass);
+
+                if (_buttonSprite.ButtonType == ButtonType.GetAllHovered)
+                    ResetButtons(ButtonType.GetAll);
+            };
+
+            _buttonSprite.OnClick += () =>
+            {
+                if (OnGameButtonClicked != null)
+                    OnGameButtonClicked(_buttonSprite.ButtonType);
+            };
 
             ShowCards = false;
         }
@@ -351,11 +431,56 @@ namespace PodkidnoiDurakGame.GameDesk
                 }
             }
 
+            // Renew button state
+            if (package.WhoseParty == PlayerType.Enemy)
+                ResetButtons(ButtonType.GetAll);
+            if (package.WhoseParty == PlayerType.Player)
+                ResetButtons(ButtonType.Pass);
+
             ShowCards = true;
         }
-        public void ShowButtons()
+        public void ResetButtons(ButtonType type)
         {
+            var currentFrame = Point.Zero;
 
+            switch (type)
+            {
+                case ButtonType.Pass:
+                    currentFrame = new Point(0, 0);
+                    break;
+                case ButtonType.PassHovered:
+                    currentFrame = new Point(0, 1);
+                    break;
+                case ButtonType.GetAll:
+                    currentFrame = new Point(1, 0);
+                    break;
+                case ButtonType.GetAllHovered:
+                    currentFrame = new Point(1, 1);
+                    break;
+                default:
+                    currentFrame = new Point(0, 0);
+                    break;
+            }
+
+            _buttonSprite.ButtonType = type;
+            _buttonSprite.Reset(currentFrame);
+        }
+        public void CreateButtons(ButtonType type)
+        {
+            Vector2 btnPos;
+            CalculateButtonSpriteState(out btnPos);
+
+            var btn = new ButtonSprite(
+                    _button,
+                    btnPos,
+                    new Point(ButtonFrameWidth, ButtonFrameHeight),
+                    Point.Zero,
+                    1,
+                    ButtonFrameOffset
+                );
+            btn.ButtonType = type;
+
+            _buttonSprite = btn;
         }
 
         
@@ -376,6 +501,7 @@ namespace PodkidnoiDurakGame.GameDesk
         public override void Update(GameTime gameTime)
         {
             _cardSpriteList.ForEach((sprite) => sprite.Update(gameTime));
+            _buttonSprite.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -385,8 +511,10 @@ namespace PodkidnoiDurakGame.GameDesk
             spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
 
             if (ShowCards)
+            {
                 _cardSpriteList.ForEach((sprite) => sprite.Draw(gameTime, spriteBatch));
-
+                _buttonSprite.Draw(gameTime, spriteBatch);
+            }
             spriteBatch.End();
 
             base.Draw(gameTime);

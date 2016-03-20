@@ -5,6 +5,7 @@ using PodkidnoiDurakGame.Core;
 using PodkidnoiDurakGame.Core.ArtificialIntelligence;
 using PodkidnoiDurakGame.Core.PlayerDefinitions;
 using PodkidnoiDurakGame.GameDesk;
+using PodkidnoiDurakGame.UI.ElementDefenitions;
 using System.Windows;
 
 namespace PodkidnoiDurakGame
@@ -82,6 +83,9 @@ namespace PodkidnoiDurakGame
             };
             gameGateway.GameDesktop.OnWhoseTurnChanged += (playerType) =>
             {
+                gameGateway.GetGamePackages(ref _player);
+                gameGateway.GetGamePackages(ref _enemy);
+
                 if (playerType == PlayerType.Player)
                     _player.TakeTheBaton();
 
@@ -102,6 +106,22 @@ namespace PodkidnoiDurakGame
 
             // Connect UI and player instance
             spriteManager.OnPlayerCardThrow += _player.Throw;
+            spriteManager.OnGameButtonClicked += (btnType) =>
+            {
+                switch (btnType)
+                {
+                    case ButtonType.Pass:
+                    case ButtonType.PassHovered:
+                        _player.Pass();
+                        break;
+                    case ButtonType.GetAll:
+                    case ButtonType.GetAllHovered:
+                        _player.GetAll();
+                        break;
+                    default:
+                        break;
+                }
+            };
 
 
             // There we start game in game desktop

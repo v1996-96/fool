@@ -53,6 +53,8 @@
     <Compile Include="Core\GameGateway.cs" />
     <Compile Include="Core\PlayerDefinitions\IPlayer.cs" />
     <Compile Include="Core\PlayerDefinitions\Player.cs" />
+    <Compile Include="UI\ElementDefenitions\ButtonType.cs" />
+    <Compile Include="UI\Sprite\ButtonSprite.cs" />
     <Compile Include="UI\Sprite\CardSprite.cs" />
     <Compile Include="Core\CardDefinitions\Card.cs" />
     <Compile Include="Core\CardDefinitions\CardSuit.cs" />

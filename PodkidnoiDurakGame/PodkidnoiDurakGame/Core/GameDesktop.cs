@@ -48,8 +48,8 @@ namespace PodkidnoiDurakGame.Core
             get { return _whoseTurn; }
             private set
             {
-                if (OnWhoseTurnChanged != null) OnWhoseTurnChanged(value);
                 _whoseTurn = value;
+                if (OnWhoseTurnChanged != null) OnWhoseTurnChanged(value);
             }
         }
         private PlayerType _whoseTurn;
@@ -61,8 +61,8 @@ namespace PodkidnoiDurakGame.Core
             }
             private set
             {
-                if (OnWhosePartyChanged != null) OnWhosePartyChanged(value);
                 _whoseParty = value;
+                if (OnWhosePartyChanged != null) OnWhosePartyChanged(value);
             }
         }
         private PlayerType _whoseParty;
@@ -395,19 +395,23 @@ namespace PodkidnoiDurakGame.Core
         }
         private void HandOutCardsToPlayer()
         {
-            while (Deck.Count > 0 && PlayerCards.Count < DefaultPlayerCardsCount)
+            do
             {
-                PlayerCards.Add( Deck[ Deck.Count-1 ] );
-                Deck.RemoveAt( Deck.Count-1 );
-            }
+                if (PlayerCards.Count >= DefaultPlayerCardsCount) break;
+
+                PlayerCards.Add(Deck[Deck.Count - 1]);
+                Deck.RemoveAt(Deck.Count - 1);
+            } while (Deck.Count > 0);
         }
         private void HandOutCardsToEnemy()
         {
-            while (Deck.Count > 0 && EnemyCards.Count < DefaultPlayerCardsCount)
+            do
             {
+                if (EnemyCards.Count >= DefaultPlayerCardsCount) break;
+
                 EnemyCards.Add(Deck[Deck.Count - 1]);
                 Deck.RemoveAt(Deck.Count - 1);
-            }
+            } while (Deck.Count > 0);
         }
         #endregion
 
@@ -665,11 +669,11 @@ namespace PodkidnoiDurakGame.Core
 
                     DescPairs.Clear();
                     HandOutCards();
+                    WhoseParty = PlayerType.Enemy;
+                    WhoseTurn = PlayerType.Enemy;
 
                     if (OnPass != null) OnPass(player);
                     CheckGameState();
-                    WhoseParty = PlayerType.Enemy;
-                    WhoseTurn = PlayerType.Enemy;
                 }
 
                 if (WhoseParty == PlayerType.Enemy)
@@ -682,11 +686,11 @@ namespace PodkidnoiDurakGame.Core
 
                     DescPairs.Clear();
                     HandOutCards();
+                    WhoseParty = PlayerType.Player;
+                    WhoseTurn = PlayerType.Player;
 
                     if (OnPass != null) OnPass(player);
                     CheckGameState();
-                    WhoseParty = PlayerType.Player;
-                    WhoseTurn = PlayerType.Player;
                 }
             }
             #endregion
