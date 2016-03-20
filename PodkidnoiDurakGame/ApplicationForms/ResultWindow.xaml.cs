@@ -20,8 +20,6 @@ namespace ApplicationForms
     {
         private string _result;
 
-        // fix file
-
         public ResultWindow()
         {
             InitializeComponent();
@@ -55,12 +53,6 @@ namespace ApplicationForms
         private void OpenAboutWindow_Click(object sender, RoutedEventArgs e)
         {
             if (OnAboutShow != null) OnAboutShow();
-        }
-
-        private void ExitGame_Click(object sender, RoutedEventArgs e)
-        {
-            if (OnExit != null) OnExit();
-            this.Close();
         }
 
     }
